@@ -1,0 +1,32 @@
+{
+  "swapTransaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAFCNewXccu9g7dXvKME/krd0b7YyFH2oqc3sSiqEjiq7tqU3LSjm0jk/bPaAxvqth2/bGQq6iUPh/4Rn9NvG5AQ4/dp5YiF93ngSMiaq749w19p0WXm2gPZMGyJor40Q27dQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAEedVb8jHAbu50xW7OaBUH/bGy3qP0jlECsc2iVrwTj4yXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZtD/6J/XX9kp0wJsfKVh53ksJqzbfyd1RSzIap7OM5ejC/y6JY0n6Yf+6BCt6ccv4rfsnKXJu1Zqi5e4/jG2+EQQEAAUCwFwVAAQACQM9HAEAAAAAAAYGAAIADwMNAQEFFw0AAQIFDwUHBRAAEhELAQIICQwNDg8KI+UXy5d6460qAQAAAC5kAAEAypo7AAAAAB3QpQAAAAAAUAAAAf6QYu83Op+8GB6eshicTED3LfT+I//KGe19E9I+l9X1BAAKBwgHBAMFBgEJAg==",
+  "lastValidBlockHeight": 425209420,
+  "prioritizationFeeLamports": 101871,
+  "computeUnitLimit": 1400000,
+  "prioritizationType": {
+    "computeBudget": {
+      "microLamports": 72765,
+      "estimatedMicroLamports": 72765
+    }
+  },
+  "simulationSlot": 447167347,
+  "dynamicSlippageReport": {
+    "slippageBps": 80,
+    "otherAmount": null,
+    "simulatedIncurredSlippageBps": null,
+    "amplificationRatio": null,
+    "categoryName": "default",
+    "heuristicMaxSlippageBps": 500,
+    "rtseSlippageBps": null,
+    "failedTxnEstSlippage": 65535,
+    "emaEstSlippage": 65535,
+    "useIncurredSlippageForQuoting": null
+  },
+  "simulationError": {
+    "errorCode": "TRANSACTION_ERROR",
+    "error": "Attempt to debit an account but found no record of a prior credit."
+  },
+  "addressesByLookupTableAddress": null,
+  "timeTaken": 0.005307079,
+  "createAtaTimeTaken": 0.003236271
+}

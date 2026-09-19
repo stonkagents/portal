@@ -1,0 +1,117 @@
+/*
+ * The artwork studio's own controls: the zoom range, the drag frame and the
+ * finish swatches. Scoped under .artwork-* so nothing leaks. Colours are the
+ * design tokens from globals.css; motion collapses under prefers-reduced-motion
+ * through the global rule.
+ */
+
+/* The zoom range: a 4px track filled to the thumb, a glowing 20px thumb, no native chrome. */
+.artwork-zoom {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.artwork-zoom:focus {
+  outline: none;
+}
+.artwork-zoom::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--color-accent-green) 0 var(--artwork-fill, 0%),
+    var(--color-bg-tertiary) var(--artwork-fill, 0%) 100%
+  );
+}
+.artwork-zoom::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--color-bg-primary);
+  background: var(--color-accent-green);
+  box-shadow: var(--shadow-glow);
+  transition: transform 150ms ease;
+}
+.artwork-zoom:active::-webkit-slider-thumb {
+  transform: scale(1.1);
+}
+.artwork-zoom:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-accent-green);
+  outline-offset: 3px;
+}
+.artwork-zoom::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-bg-tertiary);
+}
+.artwork-zoom::-moz-range-progress {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-accent-green);
+}
+.artwork-zoom::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--color-bg-primary);
+  background: var(--color-accent-green);
+  box-shadow: var(--shadow-glow);
+}
+.artwork-zoom:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-accent-green);
+  outline-offset: 3px;
+}
+
+/* The frame the creator drags the picture around in. */
+.artwork-frame {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.artwork-frame[data-dragging='true'] {
+  cursor: grabbing;
+}
+.artwork-grid {
+  opacity: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+  background-size: 33.3334% 33.3334%;
+  background-position: -1px -1px;
+  transition: opacity 150ms ease;
+}
+.artwork-frame[data-dragging='true'] .artwork-grid {
+  opacity: 1;
+}
+
+/* Finish swatches: a small tile that shows what the finish does to a square. */
+.artwork-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-hover);
+  background: var(--color-bg-input);
+}
+.artwork-swatch--none {
+  background-image: linear-gradient(135deg, transparent 47%, var(--color-border-hover) 47% 53%, transparent 53%);
+}
+.artwork-swatch--neon {
+  background: var(--color-bg-void);
+  box-shadow:
+    inset 0 0 0 2px var(--color-accent-green),
+    inset 0 0 8px rgba(0, 255, 0, 0.6);
+}
+.artwork-swatch--duotone {
+  background: linear-gradient(135deg, var(--color-bg-void) 0%, var(--color-accent-green) 100%);
+}
+.artwork-swatch--vignette {
+  background: radial-gradient(circle at center, var(--color-text-secondary) 20%, var(--color-bg-void) 85%);
+}

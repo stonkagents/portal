@@ -1,0 +1,719 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   StonkAgents Design System — Tailwind v4 Theme
+   Source: /StonkAgents/css/tokens.css + theme.css
+   ============================================================ */
+
+@theme {
+  /* ---- Colors: Backgrounds ---- */
+  --color-bg-void: #080a0f;
+  --color-bg-primary: #080a0f;
+  --color-bg-secondary: #0f1118;
+  --color-bg-tertiary: #181c28;
+  --color-bg-input: #141824;
+
+  /* ---- Colors: Accents ---- */
+  --color-accent-green: #00ff00;
+  --color-accent-red: #ff4d4d;
+  --color-accent-blue: #4a9eff;
+  --color-accent-yellow: #ffcc00;
+  --color-accent-purple: #b388ff;
+
+  /* ---- Alpha variants (theme-aware) ---- */
+  --color-accent-green-alpha-08: rgba(0, 255, 0, 0.08);
+  --color-accent-green-alpha-10: rgba(0, 255, 0, 0.1);
+  --color-accent-green-alpha-12: rgba(0, 255, 0, 0.12);
+  --color-accent-green-alpha-15: rgba(0, 255, 0, 0.15);
+  --color-accent-green-alpha-30: rgba(0, 255, 0, 0.3);
+  --color-accent-red-alpha-12: rgba(255, 77, 77, 0.12);
+  --color-accent-red-alpha-20: rgba(255, 77, 77, 0.2);
+  --color-accent-blue-alpha-12: rgba(74, 158, 255, 0.12);
+  --color-accent-blue-alpha-15: rgba(74, 158, 255, 0.15);
+  --color-accent-yellow-alpha-08: rgba(255, 204, 0, 0.08);
+  --color-accent-yellow-alpha-20: rgba(255, 204, 0, 0.2);
+
+  /* ---- Glass morphism ---- */
+  --color-glass-bg: rgba(15, 17, 24, 0.6);
+  --color-glass-border: rgba(255, 255, 255, 0.06);
+  --backdrop-blur: blur(12px);
+
+  /* ---- Medals ---- */
+  --color-gold: #ffcc00;
+  --color-silver: #c0c0c0;
+  --color-bronze: #cd7f32;
+
+  /* ---- Misc ---- */
+  --color-offline-red: #ff4d4d;
+  --color-code-bg: #0a0c12;
+  --color-overlay-bg: rgba(0, 0, 0, 0.6);
+
+  /* ---- Colors: Text ---- */
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #aaaaaa;
+  --color-text-tertiary: #999999;
+
+  /* ---- Colors: Borders ---- */
+  --color-border-default: #1a1f2e;
+  --color-border-hover: #2a3040;
+  --color-border-accent: #00ff00;
+
+  /* ---- Nav overlay ---- */
+  --color-bg-nav: rgba(8, 10, 15, 0.95);
+
+  /* ---- Colors: Rank badges ---- */
+  --color-rank-bronze: #cd7f32;
+  --color-rank-silver: #c0c0c0;
+  --color-rank-gold: #ffcc00;
+  --color-rank-og: #b388ff;
+
+  /* ---- Typography ---- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Fluid, but never below phone-readable sizes (12 / 14 / 16px at the small end). */
+  --text-xs: clamp(0.75rem, 1.5vw, 0.75rem);
+  --text-sm: clamp(0.875rem, 1.8vw, 0.875rem);
+  --text-base: clamp(1rem, 2vw, 1rem);
+  --text-lg: clamp(1.125rem, 2.2vw, 1.125rem);
+  --text-xl: clamp(1.25rem, 2.5vw, 1.25rem);
+  --text-2xl: clamp(1.375rem, 3vw, 1.5rem);
+  --text-3xl: clamp(1.625rem, 4vw, 1.875rem);
+  --text-4xl: clamp(1.875rem, 5vw, 2.25rem);
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-loose: 1.75;
+
+  /* ---- Spacing (4px base) ---- */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  /* ---- Border radius ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* ---- Shadows & Glows ---- */
+  --shadow-sm: 0 2px 4px rgba(0, 255, 0, 0.08);
+  --shadow-md: 0 4px 8px rgba(0, 255, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 255, 0, 0.18);
+
+  /* ---- Transitions ---- */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 400ms ease-in-out;
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+  --nav-height: 56px;
+  --drawer-width: 280px;
+  --chat-width: 360px;
+  --notification-width: 380px;
+
+  /* ---- Breakpoints ---- */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 600px;
+  --breakpoint-lg: 900px;
+
+  /* ---- Animations (tier: 1=experiential, 2=functional, 3=ambient) ---- */
+  --animate-claw-spin: claw-spin 4s linear infinite; /* tier 3 */
+  --animate-credit-pop: credit-pop 0.4s ease-out; /* tier 2 */
+  --animate-daemon-pulse: daemon-pulse 2s ease-in-out infinite; /* tier 2 */
+  --animate-kill-pulse: kill-pulse 1.5s ease-in-out infinite; /* tier 2 */
+  --animate-typing-bounce: typing-bounce 1.4s ease-in-out infinite; /* tier 2 */
+  --animate-slide-in: slide-in 0.3s ease-out; /* tier 2 */
+  --animate-fade-in: fade-in 0.25s ease-out; /* tier 2 */
+
+  /* ---- Logo / Mascot Animations ---- */
+  --animate-neon-breathe: neon-breathe 2.5s ease-in-out infinite; /* tier 3 */
+  --animate-claw-bounce: claw-bounce 1.2s ease-in-out 3; /* tier 3: a greeting on arrival, then still */
+  --animate-scuttle: scuttle 4s ease-in-out infinite; /* tier 3 */
+  --animate-glasses-glint: glasses-glint 3s ease-in-out infinite; /* tier 3 */
+
+  /* ---- Splash Screen Animations ---- */
+  --animate-splash-btn-pulse: splash-btn-pulse 2s ease-in-out infinite; /* tier 1 */
+  --animate-splash-dot-pulse: splash-dot-pulse 1.5s ease-in-out infinite; /* tier 1 */
+  --animate-splash-pulse-expand: splash-pulse-expand 1.5s ease-out forwards; /* tier 1 */
+  --animate-step-ring: step-ring 1.6s ease-out 2; /* tier 2: the live home step announces itself twice, then rests */
+}
+
+/* ---- Keyframes (tiers: 1 = essential feedback, 2 = state changes, 3 = ambient decoration; each keyframe is labelled) ---- */
+
+/* animation-tier: 3 — ambient: brand logo rotation */
+@keyframes claw-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* animation-tier: 2 — functional: credit action bounce feedback */
+@keyframes credit-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* animation-tier: 2 — functional: daemon connection status heartbeat */
+@keyframes daemon-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* animation-tier: 2 — functional: destructive action danger emphasis.
+   Opacity only: the red halo is a static box-shadow on a ::before, this fades it. */
+@keyframes kill-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* animation-tier: 2 — functional: chat typing indicator */
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+/* animation-tier: 2 — functional: panel entry from right */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* animation-tier: 2 — functional: element appearance with subtle scale */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---- Logo / Mascot Keyframes ---- */
+/* animation-tier: 3 — ambient: mascot breathing (transform + opacity; the glow, where wanted, is a static drop-shadow on a wrapper) */
+@keyframes neon-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* animation-tier: 1 — experiential: navigation loader dots stagger (the dots carry a static box-shadow) */
+@keyframes neon-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+/* animation-tier: 3 — ambient: playful mascot bounce */
+@keyframes claw-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  65% {
+    transform: translateY(-5px);
+  }
+  80% {
+    transform: translateY(0);
+  }
+}
+
+/* animation-tier: 3 — ambient: mascot scuttle walk cycle */
+@keyframes scuttle {
+  0%,
+  100% {
+    transform: translateX(0) scaleX(-1);
+    opacity: 0.6;
+  }
+  15% {
+    transform: translateX(2px) scaleX(-1);
+    opacity: 0.8;
+  }
+  30% {
+    transform: translateX(8px) scaleX(-1) translateY(-2px);
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(16px) scaleX(-1);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translateX(22px) scaleX(-1) translateY(-1px);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateX(12px) scaleX(-1);
+    opacity: 0.3;
+  }
+  90% {
+    transform: translateX(4px) scaleX(-1);
+    opacity: 0.5;
+  }
+}
+
+/* animation-tier: 3 — ambient: mascot sunglasses flick (transform + opacity) */
+@keyframes glasses-glint {
+  0%,
+  90%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  95% {
+    transform: scale(1.06);
+    opacity: 0.75;
+  }
+}
+
+/* ---- Splash Screen Keyframes ---- */
+/* animation-tier: 1 — experiential: splash CTA breathing glow.
+   Opacity only: the halo is a static box-shadow on the button's ::before. */
+@keyframes splash-btn-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* animation-tier: 1 — experiential: splash status dots rhythm (opacity only) */
+@keyframes splash-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* animation-tier: 1 — experiential: splash dismiss expanding wave.
+   A fixed 100vmax circle scaled on the compositor; never animates width/height. */
+@keyframes step-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+@keyframes splash-pulse-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
+}
+
+/* ---- Utility Keyframes ---- */
+/* animation-tier: 2 — functional: content entry from below */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* animation-tier: 3 — ambient: status indicator opacity rhythm */
+@keyframes statusPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* animation-tier: 2 — functional: loading progress bar sweep */
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+/* ---- Base styles ---- */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-void);
+    color: var(--color-text-primary);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    /* Landscape phones with a notch: keep the page out of the rounded corners (viewport-fit=cover). */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* A fieldset defaults to min-width: min-content, so a form wider than a phone pushed the whole
+     page sideways (Settings). Form controls in a flex row likewise refuse to shrink below their
+     intrinsic width unless told they may. */
+  fieldset {
+    min-inline-size: 0;
+  }
+  input,
+  select,
+  textarea {
+    min-width: 0;
+  }
+
+  /* One keyboard focus ring for every control, in the accent colour, only for keyboard focus.
+     A control that sets outline-none keeps its own indicator (the inputs change border colour). */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-green);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(0, 255, 0, 0.2);
+    color: var(--color-text-primary);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-primary);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-default);
+    border-radius: var(--radius-full);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+  }
+}
+
+/* ---- Custom utilities ---- */
+@utility text-glow {
+  text-shadow: 0 0 10px #00ff00;
+}
+
+@utility text-glow-red {
+  text-shadow: 0 0 10px #ff4d4d;
+}
+
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@utility animate-status-pulse {
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@utility glass {
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: var(--backdrop-blur);
+}
+
+/* ============================================================
+   Light Theme Override
+   Applied via html.light class — overrides dark-first tokens
+   Tested for WCAG AA readability (4.5:1 contrast on text)
+   ============================================================ */
+html.light {
+  --color-bg-void: #f5f5f5;
+  --color-bg-primary: #eef1f5;
+  --color-bg-secondary: #f5f7fa;
+  --color-bg-tertiary: #eef0f2;
+  --color-bg-input: #f0f2f5;
+
+  --color-accent-green: #00873a;
+  --color-accent-red: #cc3333;
+  --color-accent-blue: #2563eb;
+  --color-accent-yellow: #a67b0a;
+  --color-accent-purple: #6d2fd4;
+
+  --color-text-primary: #1a1e2a;
+  --color-text-secondary: #4a5068;
+  --color-text-tertiary: #888899;
+
+  --color-border-default: #d0d5e0;
+  --color-border-hover: #c0c4cc;
+  --color-border-accent: #00873a;
+
+  --color-accent-green-alpha-08: rgba(0, 135, 58, 0.08);
+  --color-accent-green-alpha-12: rgba(0, 135, 58, 0.12);
+  --color-accent-green-alpha-15: rgba(0, 135, 58, 0.15);
+  --color-accent-green-alpha-30: rgba(0, 135, 58, 0.3);
+  --color-accent-red-alpha-12: rgba(255, 77, 77, 0.12);
+  --color-accent-blue-alpha-12: rgba(37, 99, 235, 0.12);
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+
+  /* Glass morphism — light surface */
+  --color-glass-bg: rgba(255, 255, 255, 0.6);
+  --color-glass-border: rgba(0, 0, 0, 0.08);
+}
+
+/* ── Light Theme Variant A: "Warm Phosphor" (Solarized-inspired) ── */
+html.light.light-warm {
+  --color-bg-void: #f5f0e8;
+  --color-bg-primary: #f2ead8;
+  --color-bg-secondary: #ebe3cc;
+  --color-bg-tertiary: #e0d8c0;
+  --color-bg-input: #e8e0c8;
+  --color-accent-green: #1a7a1a;
+  --color-accent-red: #8b1a1a;
+  --color-accent-blue: #1a4a7a;
+  --color-accent-yellow: #7a5c00;
+  --color-accent-purple: #5c2a8a;
+  --color-text-primary: #1c1a14;
+  --color-text-secondary: #4a4435;
+  --color-text-tertiary: #7a7060;
+  --color-border-default: #c8b898;
+  --color-border-hover: #b8a888;
+  --color-border-accent: #1a7a1a;
+  --color-accent-green-alpha-08: rgba(26, 122, 26, 0.08);
+  --color-accent-green-alpha-12: rgba(26, 122, 26, 0.12);
+  --color-accent-green-alpha-15: rgba(26, 122, 26, 0.15);
+  --color-accent-green-alpha-30: rgba(26, 122, 26, 0.3);
+  --shadow-sm: 0 2px 4px rgba(28, 26, 20, 0.08);
+  --shadow-md: 0 4px 8px rgba(28, 26, 20, 0.12);
+  --shadow-lg: 0 8px 16px rgba(28, 26, 20, 0.18);
+  --color-glass-bg: rgba(242, 234, 216, 0.7);
+  --color-glass-border: rgba(28, 26, 20, 0.08);
+}
+
+/* ── Light Theme Variant B: "Cool Tech" — default html.light above ── */
+
+/* ── Light Theme Variant C: "Frosted Terminal" (Catppuccin-inspired) ── */
+html.light.light-frost {
+  --color-bg-void: #e8ecf4;
+  --color-bg-primary: #eff1f7;
+  --color-bg-secondary: #f4f6fc;
+  --color-bg-tertiary: #e2e6f0;
+  --color-bg-input: #e6eaf4;
+  --color-accent-green: #1f7a1f;
+  --color-accent-red: #d92b2b;
+  --color-accent-blue: #1a65cc;
+  --color-accent-yellow: #c47d00;
+  --color-accent-purple: #7c35d0;
+  --color-text-primary: #2a2d3e;
+  --color-text-secondary: #555878;
+  --color-text-tertiary: #8890b0;
+  --color-border-default: #c0c8de;
+  --color-border-hover: #aab2cc;
+  --color-border-accent: #1f7a1f;
+  --color-accent-green-alpha-08: rgba(31, 122, 31, 0.08);
+  --color-accent-green-alpha-12: rgba(31, 122, 31, 0.12);
+  --color-accent-green-alpha-15: rgba(31, 122, 31, 0.15);
+  --color-accent-green-alpha-30: rgba(31, 122, 31, 0.3);
+  --shadow-sm: 0 2px 4px rgba(42, 45, 62, 0.07);
+  --shadow-md: 0 4px 8px rgba(42, 45, 62, 0.1);
+  --shadow-lg: 0 8px 16px rgba(42, 45, 62, 0.14);
+  --color-glass-bg: rgba(231, 234, 244, 0.72);
+  --color-glass-border: rgba(42, 45, 62, 0.08);
+}
+
+/* Network map always stays dark regardless of theme */
+html.light .hero__map,
+html.light .network-map {
+  --color-bg-void: #080a0f;
+  --color-bg-primary: #080a0f;
+  --color-border-default: #1e2530;
+  --color-border-hover: #2a3040;
+  --color-accent-green: #00ff00;
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #888888;
+}
+
+/* ── phones: lift the smallest text so labels and hints stay legible ────── */
+@media (max-width: 599px) {
+  .text-\[11px\] {
+    font-size: 12px;
+  }
+  .text-\[10px\] {
+    font-size: 11px;
+  }
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────
+   Every infinite loop stops on its first frame and transitions collapse.
+   Finite entry animations still run (in ~0 ms) so nothing waits on them. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Number fields that bring their own stepper buttons: hide the browser's spinner arrows. */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ── Agent token panel: entrance choreography ──────────────────────────────
+   Finite, one iteration each, transform and opacity only. The ring's arcs
+   are driven by requestAnimationFrame in BurnRing; these cover the pieces
+   CSS can carry: the burn chart's bars rising, its next-burn marker dropping,
+   the vesting track drawing in, and the next-burn tick pulsing once. The
+   reduced-motion rule above collapses them to their last frame, and the
+   rule below drops the staggers so nothing appears piecemeal. */
+@keyframes agent-bar-in {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes agent-track-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes agent-marker-drop {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes agent-tick-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(2.4);
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.agent-track-in {
+  transform-origin: left center;
+  animation: agent-track-in 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.agent-marker-drop {
+  animation: agent-marker-drop 450ms cubic-bezier(0.2, 0.7, 0.2, 1) 650ms both;
+}
+.agent-tick-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: agent-tick-pulse 700ms ease-out 1;
+}
+.agent-bar-in {
+  transform-origin: bottom center;
+  animation: agent-bar-in 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .agent-bar-in,
+  .agent-marker-drop {
+    animation-delay: 0ms !important;
+  }
+}

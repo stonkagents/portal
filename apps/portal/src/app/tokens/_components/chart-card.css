@@ -1,0 +1,230 @@
+/*
+ * The chart card, styled like the token terminal's chart card.
+ *
+ * A port of the terminal's .tt-chartcard / .tt-chip / .tt-data / .tt-deltas /
+ * .tt-tvwrap rules onto this app's design tokens (globals.css). Scoped under
+ * .cc-chartcard so nothing here leaks into the rest of the page. Every data
+ * value renders in --font-mono with tabular numerals.
+ */
+.cc-chartcard {
+  --cc-card: var(--color-bg-secondary);
+  --cc-ink: var(--color-text-primary);
+  --cc-sub: var(--color-text-secondary);
+  --cc-mute: var(--color-text-tertiary);
+  --cc-line: var(--color-border-default);
+  --cc-edge: var(--color-border-hover);
+  --cc-accent: var(--color-accent-green);
+  --cc-up: var(--color-accent-green);
+  --cc-dn: var(--color-accent-red);
+  --cc-warn: var(--color-accent-yellow);
+  --cc-fs-data-sm: var(--text-xs, 11px);
+  --cc-fs-caption: var(--text-xs, 12px);
+  --cc-radius: var(--radius-lg, 12px);
+  --cc-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --cc-dur: 220ms;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 420px;
+  min-width: 0;
+  padding: var(--spacing-4, 14px);
+  background: var(--cc-card);
+  border: 1px solid var(--cc-line);
+  border-radius: var(--cc-radius);
+  box-shadow: var(--shadow-sm, 0 1px 0 rgba(255, 255, 255, 0.02) inset);
+  color: var(--cc-ink);
+}
+
+.cc-chartcard *,
+.cc-chartcard *::before,
+.cc-chartcard *::after {
+  box-sizing: border-box;
+}
+
+.cc-chartcard .cc-data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+.cc-chartcard .cc-sub {
+  color: var(--cc-sub);
+  font-size: var(--cc-fs-caption);
+}
+.cc-chartcard .cc-mute {
+  color: var(--cc-mute);
+}
+.cc-chartcard .cc-up {
+  color: var(--cc-up);
+}
+.cc-chartcard .cc-dn {
+  color: var(--cc-dn);
+}
+.cc-chartcard .cc-warn {
+  color: var(--cc-warn);
+}
+.cc-chartcard .cc-foot {
+  color: var(--cc-mute);
+  font-size: var(--cc-fs-data-sm);
+}
+.cc-chartcard .cc-price {
+  color: var(--cc-ink);
+  font-size: var(--text-base, 15px);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* ── rows ───────────────────────────────────────────────────────────────── */
+
+.cc-chartcard .cc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cc-chartcard .cc-tvhead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cc-chartcard .cc-tfs,
+.cc-chartcard .cc-modes {
+  display: inline-flex;
+  gap: 4px;
+}
+.cc-chartcard .cc-right {
+  margin-left: auto;
+}
+.cc-chartcard .cc-deltas {
+  display: inline-flex;
+  gap: 10px;
+  font-size: var(--cc-fs-data-sm);
+  color: var(--cc-sub);
+}
+.cc-chartcard .cc-delta i {
+  font-style: normal;
+  color: var(--cc-mute);
+  margin-right: 4px;
+}
+.cc-chartcard .cc-delta b {
+  font-weight: 500;
+}
+
+/* ── chips ──────────────────────────────────────────────────────────────── */
+
+.cc-chartcard .cc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--cc-edge);
+  background: transparent;
+  color: var(--cc-sub);
+  font-size: var(--cc-fs-data-sm);
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--cc-dur) var(--cc-ease),
+    border-color var(--cc-dur) var(--cc-ease),
+    background var(--cc-dur) var(--cc-ease);
+}
+.cc-chartcard button.cc-chip:hover {
+  color: var(--cc-ink);
+  border-color: var(--cc-sub);
+}
+.cc-chartcard .cc-chip:focus-visible {
+  outline: 2px solid var(--color-accent-green-alpha-30, rgba(40, 209, 124, 0.55));
+  outline-offset: 1px;
+}
+.cc-chartcard .cc-chip.on {
+  color: var(--cc-accent);
+  border-color: var(--cc-accent);
+  background: color-mix(in srgb, var(--cc-accent) 10%, transparent);
+}
+
+/* ── canvas ─────────────────────────────────────────────────────────────── */
+
+.cc-chartcard .cc-tvwrap {
+  position: relative;
+  flex: 1;
+  min-height: 320px;
+}
+.cc-chartcard .cc-tvchart {
+  position: absolute;
+  inset: 0;
+}
+.cc-chartcard .cc-ohlc {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: var(--cc-fs-data-sm);
+  color: var(--cc-sub);
+  background: color-mix(in srgb, var(--cc-card) 80%, transparent);
+  padding: 2px 6px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 2;
+}
+.cc-chartcard .cc-chartempty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+.cc-chartcard .cc-empty {
+  color: var(--cc-sub);
+  font-family: var(--font-sans, inherit);
+  text-align: center;
+  padding: 14px 4px;
+}
+.cc-chartcard .cc-tvfoot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cc-chartcard .cc-tvfoot > span {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+}
+
+/* the venue embed sits in the same slot as the canvas, without the padding */
+.cc-chartcard .cc-embed {
+  flex: 1;
+  min-width: 0;
+  margin: 0 calc(-1 * var(--spacing-4, 14px));
+  border-top: 1px solid var(--cc-line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-chartcard .cc-chip {
+    transition: none;
+  }
+}
+
+/* ── phones ─────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cc-chartcard {
+    padding: 12px;
+  }
+  .cc-chartcard .cc-chip {
+    min-height: 32px;
+    padding: 4px 11px;
+  }
+  .cc-chartcard .cc-row {
+    gap: 6px;
+  }
+  /* The header already links the explorer; the pill rows read better flush left. */
+  .cc-chartcard .cc-explorer {
+    display: none;
+  }
+  .cc-chartcard .cc-right {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+}

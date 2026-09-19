@@ -1,0 +1,49 @@
+{
+  "inputMint": "6GmAFSYs4gk3FDao5FzzySQpPZaWsa4rUJHacpMpUNgx",
+  "inAmount": "1000000000",
+  "outputMint": "8RVBk8vxLiUHueLUW1f4izFVqN3nWippLhkohKg6EGkS",
+  "outAmount": "10866717",
+  "otherAmountThreshold": "10758050",
+  "swapMode": "ExactIn",
+  "slippageBps": 100,
+  "platformFee": null,
+  "priceImpactPct": "0.0277223908046053188421897357",
+  "routePlan": [
+    {
+      "swapInfo": {
+        "ammKey": "BUVzsLLLG7GWoyJVoU31pXiBveazA6GXTavZ9VD3CwS9",
+        "label": "Raydium CP",
+        "inputMint": "6GmAFSYs4gk3FDao5FzzySQpPZaWsa4rUJHacpMpUNgx",
+        "outputMint": "8RVBk8vxLiUHueLUW1f4izFVqN3nWippLhkohKg6EGkS",
+        "inAmount": "1000000000",
+        "outAmount": "10866717",
+        "updateContextSlot": "447167278"
+      },
+      "percent": 100,
+      "bps": null
+    }
+  ],
+  "contextSlot": 447167281,
+  "timeTaken": 0.01290943,
+  "swapUsdValue": "0.1782748695269197",
+  "mostReliableAmmsQuoteReport": {
+    "info": {
+      "zxTpi4BtaWX3mgdAPoezkMD1hxx8CdeCfrqXMWvSCLX": "1761366",
+      "BUVzsLLLG7GWoyJVoU31pXiBveazA6GXTavZ9VD3CwS9": "10866717"
+    }
+  },
+  "longtailMarketQuoteReport": null,
+  "useIncurredSlippageForQuoting": null,
+  "useRewards": null,
+  "otherRoutePlans": null,
+  "loadedLongtailToken": false,
+  "instructionVersion": null,
+  "additionalIntermediateTokens": [
+    "3QNbWxXmuPvDmwpo7jgkQYD1PMS4o7JfAk81thpZkJm2",
+    "2MuQa9s9mJup73FMc76bewEmXRQw4aYc5hz29mNnii5X",
+    "vZVghRkDqGH12JSckK9A78ZkkPWQe2JPGA5Zspc5x1c",
+    "9EC8jjKkVs9jtURuBRHXEtmFHHUdWP8kd2woWDAJrVTe",
+    "4SAdJxRFt5UHEcHA64wq2zDkkp1GQPZzSwyH9b9J5U1D",
+    "FcER1LV6ZMEhfkWckUh9NncYg4dcmJ5EvVzyWiYfcQiJ"
+  ]
+}

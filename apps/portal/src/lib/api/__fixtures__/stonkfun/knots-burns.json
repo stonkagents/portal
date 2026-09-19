@@ -1,0 +1,58 @@
+{
+  "data": {
+    "mint": "8RVBk8vxLiUHueLUW1f4izFVqN3nWippLhkohKg6EGkS",
+    "totals": {
+      "symbol": "KNOTS",
+      "amountRaw": "1275455037554",
+      "amountTokens": 1275455.037554,
+      "valueUsdAtBurn": 16373.862269213452,
+      "burnCount": 1966,
+      "lastBurnAt": "2026-09-14T16:15:58.148Z"
+    },
+    "burns": [
+      {
+        "signature": "4RaJAZQW3eJaa2P7ZcQhLxzDnGcUk62K9dSUF1bK8s6YNNM1YkD9tkNu6JJdkViBDgGcJipaRoagff7ieHRzAb4P",
+        "symbol": "KNOTS",
+        "amountTokens": 7043.046204,
+        "valueUsdAtBurn": 142.96179064264328,
+        "source": "flywheel",
+        "burnedAt": "2026-09-14T16:15:58.148Z"
+      },
+      {
+        "signature": "dWwbT8Rr83TL29LxwsAyyeHE8rFRbWnySeV2DNUsYedJTMsUfC5fx3odRvYWwfW5v1xtm2wCoHyn2w7c7JHrtjH",
+        "symbol": "KNOTS",
+        "amountTokens": 200.615007,
+        "valueUsdAtBurn": 4.175249906414546,
+        "source": "flywheel",
+        "burnedAt": "2026-09-14T16:05:53.020Z"
+      },
+      {
+        "signature": "3ZknVRyCL1JQspQz8kHb4HqvpDhVcmy49F1aL9B8csW1xuLQpL61u2mbb8Y8NER9eB2MwGhiyBwW9rAyggNzdpbm",
+        "symbol": "KNOTS",
+        "amountTokens": 179.338469,
+        "valueUsdAtBurn": 3.8939385783462708,
+        "source": "flywheel",
+        "burnedAt": "2026-09-14T16:01:03.777Z"
+      },
+      {
+        "signature": "3ptUWF13xTFMiokCn8is4L8uMNoSnJ8BS8mgcSTK9yAH1VwSEiiemYFPfEW21rwHzDuwYiQ3uFYP52wkHNTmug1h",
+        "symbol": "KNOTS",
+        "amountTokens": 11862.863325,
+        "valueUsdAtBurn": 257.1974525947156,
+        "source": "flywheel",
+        "burnedAt": "2026-09-14T15:56:04.873Z"
+      },
+      {
+        "signature": "2weLQqUfu639huxGTD1Py1UJT4NwbBLbEcPNgDPSa4BnHYUantpCGEFTgRkFgyHK5nwcDLVhuPxtL4mimChQNxpo",
+        "symbol": "KNOTS",
+        "amountTokens": 8000.243018,
+        "valueUsdAtBurn": 173.0256729596167,
+        "source": "flywheel",
+        "burnedAt": "2026-09-14T15:50:52.117Z"
+      }
+    ]
+  },
+  "meta": {
+    "generatedAt": "2026-09-14T16:19:15.780Z"
+  }
+}

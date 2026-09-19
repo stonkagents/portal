@@ -1,0 +1,45 @@
+StonkAgents portal
+Copyright 2026 StonkAgents
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+This product bundles or depends on the following third-party work. Each is
+used under its own license, listed with the copy in node_modules or at the
+project's home.
+
+Framework and UI
+  Next.js, React and React DOM (MIT), Vercel and Meta
+  Tailwind CSS and @tailwindcss/postcss (MIT), Tailwind Labs
+  TanStack Query (MIT), Tanner Linsley
+  react-markdown (MIT), Titus Wormer
+  clsx (MIT), Luke Edwards; tailwind-merge (MIT), Dany Castillo
+  zod (MIT), Colin McDonnell
+  lightweight-charts (Apache-2.0), TradingView, Inc.
+
+Solana and trading
+  @solana/web3.js (MIT) and @solana/spl-token (Apache-2.0), Solana Labs / Anza
+  @solana/connector (MIT), Solana Foundation; implements the Wallet Standard
+  @raydium-io/raydium-sdk-v2 (GPL-3.0), Raydium; used at build time through
+  its published npm package for the LaunchLab instructions
+  Jupiter Swap and Price APIs (https://station.jup.ag) are called over HTTPS
+  and are not bundled
+  bn.js (MIT), Fedor Indutny; buffer (MIT), Feross Aboukhadijeh
+
+Fonts
+  Geist and Geist Mono (SIL Open Font License 1.1), Vercel; self-hosted at
+  build time through next/font
+
+Wallet marks
+  The Phantom, Solflare, Backpack and MetaMask marks in
+  apps/portal/src/components/features/wallet/wallet-marks.tsx belong to their
+  owners and are shown only to identify those wallets
+
+Map data
+  apps/portal/src/components/features/network-map/land.json is generated from
+  world-atlas (ISC, Mike Bostock), itself derived from Natural Earth (public
+  domain), by apps/portal/scripts/build-land-json.mjs
+
+Tooling
+  TypeScript (Apache-2.0), Microsoft; ESLint (MIT); Prettier (MIT);
+  Vitest (MIT); Playwright (Apache-2.0), Microsoft; Turborepo (MIT), Vercel;
+  Testing Library (MIT); jsdom (MIT)

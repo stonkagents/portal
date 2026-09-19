@@ -1,0 +1,16 @@
+# gitleaks configuration: the default rules plus an allowlist for the fake keys
+# unit tests use and the public Solana account ids in recorded API fixtures.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake keys in tests and public on-chain ids in fixtures"
+regexTarget = "line"
+regexes = [
+  '''sk_live_(abcdefghijklmnop|0123456789abcdefghij)''',
+  '''ammKey''',
+  '''token_contract_address: '7xKdAbcDef123\'''',
+]
+paths = [
+  '''apps/portal/src/lib/api/__fixtures__/''',
+]

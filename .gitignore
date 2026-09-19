@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+.next-*
+out
+dist
+build
+.turbo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE / OS
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+
+# Debug / logs
+npm-debug.log*
+*.log
+
+# Testing
+coverage
+.nyc_output
+test-results/
+
+# Installers / binaries
+*.dmg
+*.msi
+*.exe
+
+# Misc
+*.tsbuildinfo
+.vercel
+apps/prelaunch/next-env.d.ts

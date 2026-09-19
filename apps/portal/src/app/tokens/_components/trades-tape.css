@@ -1,0 +1,302 @@
+/*
+ * Trades tape — the recent-trades card inside the token detail Trades tab.
+ *
+ * Reproduces the StonkAgents token-terminal tape rules (.tt-tapecard,
+ * .tt-tapehead, .tt-tape, .tt-tr, .tt-th, .tt-pager, .tt-chip) under one
+ * scoped class, mapped onto the portal's design tokens. Every data value
+ * renders in --font-mono with tabular numerals; copy in the display face.
+ */
+.trades-tape {
+  --tape-line: var(--color-border-default, #1a1f2e);
+  --tape-edge: var(--color-border-hover, #2a3040);
+  --tape-ink: var(--color-text-primary, #e8e8e8);
+  --tape-sub: var(--color-text-secondary, #aaaaaa);
+  --tape-mute: var(--color-text-tertiary, #999999);
+  --tape-card: var(--color-bg-secondary, #0f1118);
+  --tape-accent: var(--color-accent-green, #00ff00);
+  --tape-up: var(--color-accent-green, #00ff00);
+  --tape-dn: var(--color-accent-red, #ff4d4d);
+  --tape-warn: var(--color-accent-yellow, #ffcc00);
+  --tape-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --tape-dur: 220ms;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 360px;
+  padding: 14px;
+  color: var(--tape-ink);
+  font-size: 14px;
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.trades-tape .tape-data {
+  font-family: var(--font-mono, ui-monospace, Menlo, monospace);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ── header ─────────────────────────────────────────────────────────────── */
+
+.trades-tape .tape-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.trades-tape .tape-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tape-sub);
+  font-size: 12px;
+}
+.trades-tape .tape-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--tape-accent);
+  opacity: 0.6;
+}
+.trades-tape .tape-dot.fetching {
+  opacity: 1;
+  animation: tape-pulse 1.2s var(--tape-ease) infinite;
+}
+.trades-tape .tape-dot.reconnecting {
+  background: var(--tape-warn);
+  opacity: 1;
+  animation: tape-pulse 1.2s var(--tape-ease) infinite;
+}
+.trades-tape .tape-reconnecting {
+  color: var(--tape-warn);
+}
+@keyframes tape-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+.trades-tape .tape-filters {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+/* ── chips ──────────────────────────────────────────────────────────────── */
+
+.trades-tape .tape-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--tape-edge);
+  background: transparent;
+  color: var(--tape-sub);
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--tape-dur) var(--tape-ease),
+    border-color var(--tape-dur) var(--tape-ease),
+    background var(--tape-dur) var(--tape-ease);
+}
+.trades-tape button.tape-chip:hover:not(:disabled) {
+  color: var(--tape-ink);
+  border-color: var(--tape-sub);
+}
+.trades-tape .tape-chip:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.trades-tape .tape-chip.on {
+  color: var(--tape-accent);
+  border-color: var(--tape-accent);
+  background: color-mix(in srgb, var(--tape-accent) 10%, transparent);
+}
+.trades-tape .tape-chip.on.up {
+  color: var(--tape-up);
+  border-color: var(--tape-up);
+  background: color-mix(in srgb, var(--tape-up) 10%, transparent);
+}
+.trades-tape .tape-chip.on.dn {
+  color: var(--tape-dn);
+  border-color: var(--tape-dn);
+  background: color-mix(in srgb, var(--tape-dn) 10%, transparent);
+}
+
+/* ── rows ───────────────────────────────────────────────────────────────── */
+
+.trades-tape .tape-body {
+  flex: 1;
+  overflow: auto;
+  max-height: 480px;
+  font-size: 11px;
+}
+.trades-tape .tape-tr {
+  display: grid;
+  grid-template-columns: 3.2em 3.4em 1fr 1fr 1fr 1.2fr 5.5em 2em;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 4px;
+  border-bottom: 1px solid var(--tape-line);
+  white-space: nowrap;
+}
+.trades-tape .tape-tr > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.trades-tape .tape-th {
+  color: var(--tape-mute);
+  position: sticky;
+  top: 0;
+  background: var(--tape-card);
+  z-index: 1;
+}
+.trades-tape .tape-tr.buy .side {
+  color: var(--tape-up);
+}
+.trades-tape .tape-tr.sell .side {
+  color: var(--tape-dn);
+}
+.trades-tape .tape-tr.unknown .side {
+  color: var(--tape-mute);
+}
+.trades-tape .tape-tr.fresh {
+  animation: tape-flash 1.2s var(--tape-ease);
+}
+@keyframes tape-flash {
+  from {
+    background: color-mix(in srgb, var(--tape-accent) 18%, transparent);
+  }
+  to {
+    background: transparent;
+  }
+}
+.trades-tape .tape-link {
+  color: var(--tape-sub);
+  text-decoration: none;
+}
+.trades-tape .tape-link:hover {
+  color: var(--tape-accent);
+  text-decoration: underline;
+}
+.trades-tape .tape-skeleton {
+  height: 12px;
+  border-radius: 4px;
+  background: var(--tape-line);
+  animation: tape-pulse 1.2s var(--tape-ease) infinite;
+}
+
+/* ── empty / error ──────────────────────────────────────────────────────── */
+
+.trades-tape .tape-empty {
+  color: var(--tape-sub);
+  text-align: center;
+  padding: 14px 4px;
+  font-size: 13px;
+}
+.trades-tape .tape-empty .tape-chip {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ── pager ──────────────────────────────────────────────────────────────── */
+
+.trades-tape .tape-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--tape-mute);
+}
+.trades-tape .tape-pager-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.trades-tape .tape-pg {
+  min-width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--tape-line);
+  background: transparent;
+  color: var(--tape-sub);
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  cursor: pointer;
+}
+.trades-tape .tape-pg.on {
+  color: var(--tape-accent);
+  border-color: var(--tape-accent);
+}
+.trades-tape .tape-pg:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ── motion + small screens ─────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .trades-tape .tape-tr.fresh,
+  .trades-tape .tape-dot,
+  .trades-tape .tape-skeleton {
+    animation: none;
+  }
+  .trades-tape .tape-chip {
+    transition: none;
+  }
+}
+@media (max-width: 640px) {
+  .trades-tape {
+    padding: 12px;
+  }
+  .trades-tape .tape-head {
+    gap: 8px 10px;
+  }
+  /* One swipeable row of chips instead of a ragged wrap. */
+  .trades-tape .tape-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    margin-left: 0;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .trades-tape .tape-filters::-webkit-scrollbar {
+    display: none;
+  }
+  .trades-tape .tape-chip {
+    min-height: 32px;
+    flex: 0 0 auto;
+  }
+  .trades-tape .tape-tr {
+    grid-template-columns: 2.6em 2.8em 0.85fr 1.15fr 5.8em 1.6em;
+  }
+  /* phones: nothing under 12.5px */
+  .trades-tape .tape-sub {
+    font-size: 13.5px;
+  }
+  .trades-tape .tape-chip {
+    font-size: 12.5px;
+  }
+  .trades-tape .tape-body {
+    font-size: 12.5px;
+  }
+  .trades-tape .tape-empty {
+    font-size: 14.5px;
+  }
+  .trades-tape .tape-pager {
+    font-size: 12.5px;
+  }
+
+  .trades-tape .tape-tr > .tape-hide-sm {
+    display: none;
+  }
+}

@@ -1,0 +1,522 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   StonkAgents Pre-Launch — Design Tokens (Terminal Chic)
+   Subset of the portal's tokens + prelaunch-specific additions
+   ============================================================ */
+
+@theme {
+  /* ---- Colors: Backgrounds ---- */
+  --color-bg-void: #080a0f;
+  --color-bg-primary: #080a0f;
+  --color-bg-secondary: #0f1118;
+  --color-bg-tertiary: #181c28;
+  --color-bg-input: #141824;
+
+  /* ---- Colors: Accents ---- */
+  --color-accent-green: #00ff00;
+  --color-accent-red: #ff4d4d;
+  --color-accent-blue: #4a9eff;
+  --color-accent-yellow: #ffcc00;
+  --color-accent-purple: #b388ff;
+
+  /* ---- Alpha variants ---- */
+  --color-accent-green-alpha-08: rgba(0, 255, 0, 0.08);
+  --color-accent-green-alpha-10: rgba(0, 255, 0, 0.1);
+  --color-accent-green-alpha-12: rgba(0, 255, 0, 0.12);
+  --color-accent-green-alpha-15: rgba(0, 255, 0, 0.15);
+  --color-accent-green-alpha-30: rgba(0, 255, 0, 0.3);
+  --color-accent-red-alpha-12: rgba(255, 77, 77, 0.12);
+  --color-accent-red-alpha-20: rgba(255, 77, 77, 0.2);
+
+  /* ---- Glass morphism ---- */
+  --color-glass-bg: rgba(15, 17, 24, 0.6);
+  --color-glass-border: rgba(255, 255, 255, 0.06);
+  --backdrop-blur: blur(12px);
+
+  /* ---- Colors: Text ---- */
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #aaaaaa;
+  --color-text-tertiary: #999999;
+
+  /* ---- Colors: Borders ---- */
+  --color-border-default: #1a1f2e;
+  --color-border-hover: #2a3040;
+  --color-border-accent: #00ff00;
+
+  /* ---- Typography ---- */
+  --font-mono: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+
+  --text-xs: clamp(0.625rem, 1.5vw, 0.75rem);
+  --text-sm: clamp(0.75rem, 1.8vw, 0.875rem);
+  --text-base: clamp(0.875rem, 2vw, 1rem);
+  --text-lg: clamp(1rem, 2.2vw, 1.125rem);
+  --text-xl: clamp(1.125rem, 2.5vw, 1.25rem);
+  --text-2xl: clamp(1.25rem, 3vw, 1.5rem);
+  --text-3xl: clamp(1.5rem, 4vw, 1.875rem);
+  --text-4xl: clamp(1.75rem, 5vw, 2.25rem);
+  --text-hero: clamp(2.5rem, 8vw, 4rem);
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-loose: 1.75;
+
+  /* ---- Spacing (4px base) ---- */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  /* ---- Border radius ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* ---- Shadows & Glows ---- */
+  --shadow-sm: 0 2px 4px rgba(0, 255, 0, 0.08);
+  --shadow-md: 0 4px 8px rgba(0, 255, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 255, 0, 0.18);
+  --shadow-glow: 0 0 20px rgba(0, 255, 0, 0.3);
+
+  /* ---- Transitions ---- */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 400ms ease-in-out;
+
+  /* ---- Breakpoints ---- */
+  --breakpoint-sm: 375px;
+  --breakpoint-md: 600px;
+  --breakpoint-lg: 900px;
+
+  /* ---- Animations ---- */
+  --animate-claw-spin: claw-spin 4s linear infinite;
+  --animate-claw-glow: claw-glow 3s ease-in-out infinite;
+  --animate-neon-breathe: neon-breathe 2.5s ease-in-out infinite;
+  --animate-claw-bounce: claw-bounce 1.2s ease-in-out infinite;
+  --animate-scuttle: scuttle 4s ease-in-out infinite;
+  --animate-glasses-glint: glasses-glint 3s ease-in-out infinite;
+  --animate-typing-bounce: typing-bounce 1.4s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.25s ease-out;
+  --animate-slide-in: slide-in 0.3s ease-out;
+  --animate-splash-bob: splash-bob 3s ease-in-out infinite;
+  --animate-splash-btn-pulse: splash-btn-pulse 2s ease-in-out infinite;
+  --animate-splash-dot-pulse: splash-dot-pulse 1.5s ease-in-out infinite;
+  --animate-splash-fade-in: splash-fade-in 0.4s ease-out;
+  --animate-splash-pulse-expand: splash-pulse-expand 1.5s ease-out forwards;
+  --animate-confetti-fall: confetti-fall 2.5s ease-out forwards;
+  --animate-success-glow: success-glow 2s ease-in-out infinite;
+  --animate-claw-pulse-red: claw-pulse-red 2s ease-in-out infinite;
+}
+
+/* ---- Keyframes ---- */
+
+@keyframes claw-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes claw-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(255, 77, 77, 0.6));
+  }
+}
+
+@keyframes neon-breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(255, 77, 77, 0.3)) drop-shadow(0 0 15px rgba(0, 255, 0, 0.15));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 77, 77, 0.7)) drop-shadow(0 0 30px rgba(0, 255, 0, 0.4))
+      drop-shadow(0 0 60px rgba(255, 77, 77, 0.15));
+    transform: scale(1.05);
+  }
+}
+
+@keyframes claw-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  65% {
+    transform: translateY(-5px);
+  }
+  80% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes scuttle {
+  0%,
+  100% {
+    transform: translateX(0) scaleX(-1);
+    opacity: 0.6;
+  }
+  15% {
+    transform: translateX(2px) scaleX(-1);
+    opacity: 0.8;
+  }
+  30% {
+    transform: translateX(8px) scaleX(-1) translateY(-2px);
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(16px) scaleX(-1);
+    opacity: 0.8;
+  }
+  60% {
+    transform: translateX(22px) scaleX(-1) translateY(-1px);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateX(12px) scaleX(-1);
+    opacity: 0.3;
+  }
+  90% {
+    transform: translateX(4px) scaleX(-1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes glasses-glint {
+  0%,
+  90%,
+  100% {
+    filter: brightness(1);
+  }
+  95% {
+    filter: brightness(1.8) drop-shadow(0 0 8px rgba(0, 255, 0, 0.6));
+  }
+}
+
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes splash-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes splash-btn-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 25px rgba(0, 255, 0, 0.5),
+      0 0 50px rgba(0, 255, 0, 0.15);
+  }
+}
+
+@keyframes splash-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
+  }
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+  }
+}
+
+@keyframes splash-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes splash-pulse-expand {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 300vmax;
+    height: 300vmax;
+    opacity: 0;
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes success-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 12px rgba(0, 255, 0, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 28px rgba(0, 255, 0, 0.7));
+  }
+}
+
+@keyframes claw-pulse-red {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 4px rgba(255, 77, 77, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 77, 77, 0.6));
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+    background: #00ff00;
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 77, 77, 0.6);
+    background: #ff4d4d;
+  }
+}
+
+/* ---- Thug mode: smoke + ember animations ---- */
+@keyframes smoke-rise {
+  0% {
+    opacity: 0.5;
+    transform: translateY(0) scaleX(1);
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scaleX(1.3);
+  }
+}
+
+@keyframes ember-glow {
+  0%,
+  100% {
+    fill: #ff6b35;
+    filter: drop-shadow(0 0 2px #ff6b35);
+  }
+  50% {
+    fill: #ff8c00;
+    filter: drop-shadow(0 0 6px #ff6b35);
+  }
+}
+
+@keyframes glint-flash {
+  0%,
+  85%,
+  100% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  95% {
+    opacity: 0;
+  }
+}
+
+/* ---- Network line animation for hero background ---- */
+@keyframes network-scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes network-pulse {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ---- Base styles ---- */
+@layer base {
+  html {
+    font-family: var(--font-mono);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-void);
+    color: var(--color-text-primary);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: rgba(0, 255, 0, 0.2);
+    color: var(--color-text-primary);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-primary);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-default);
+    border-radius: var(--radius-full);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
+  }
+
+  /* Claw SVG animation classes (used by ClawIcon component) */
+  .claw-smoke {
+    animation: smoke-rise 2s ease-out infinite;
+  }
+  .claw-smoke-2 {
+    animation-delay: 0.7s;
+  }
+  .claw-smoke-3 {
+    animation-delay: 1.4s;
+  }
+  .claw-ember {
+    animation: ember-glow 1.5s ease-in-out infinite;
+  }
+  .claw-glint {
+    animation: glint-flash 3s ease-in-out infinite;
+  }
+}
+
+/* ---- Custom utilities ---- */
+@utility text-glow {
+  text-shadow: 0 0 10px #00ff00;
+}
+
+@utility text-glow-blue {
+  text-shadow: 0 0 10px #4a9eff;
+}
+
+@utility text-glow-red {
+  text-shadow: 0 0 10px #ff4d4d;
+}
+
+@utility glow-green {
+  box-shadow: var(--shadow-glow);
+}
+
+@utility glow-red {
+  box-shadow: 0 0 20px rgba(255, 77, 77, 0.3);
+}
+
+@utility glass {
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: var(--backdrop-blur);
+}
+
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@utility animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@utility animate-claw-breathe {
+  animation: neon-breathe 2.5s ease-in-out infinite;
+}
+
+@utility animate-claw-spin {
+  animation: claw-spin 2s linear infinite;
+}
+
+@utility animate-claw-bounce {
+  animation: claw-bounce 1.2s ease-in-out infinite;
+}

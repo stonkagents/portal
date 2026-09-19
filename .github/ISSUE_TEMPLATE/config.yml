@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: mailto:security@stonkagents.com
+    about: Do not open a public issue for a security problem. Email us instead; see SECURITY.md.
+  - name: Agent, tracker or CLI
+    url: https://github.com/stonkagents
+    about: Problems in the local agent, the tracker or the command line belong to their own repositories.

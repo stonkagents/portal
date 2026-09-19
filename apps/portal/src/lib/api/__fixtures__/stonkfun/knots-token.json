@@ -1,0 +1,69 @@
+{
+  "data": {
+    "token": {
+      "mint": "8RVBk8vxLiUHueLUW1f4izFVqN3nWippLhkohKg6EGkS",
+      "pool": "GeNDy5afAWz7S9w2tMLgpK3xQqXjeDaCvYV9h8joEmjo",
+      "name": "KNOTS",
+      "symbol": "KNOTS",
+      "quote": {
+        "mint": "6GmAFSYs4gk3FDao5FzzySQpPZaWsa4rUJHacpMpUNgx",
+        "symbol": "STONK",
+        "name": "STONK",
+        "logoUrl": "/api/asset/quote-logo/6GmAFSYs4gk3FDao5FzzySQpPZaWsa4rUJHacpMpUNgx?v=c3c81410",
+        "category": "custom",
+        "categoryLabel": "Custom"
+      },
+      "launchpad": "launchlab",
+      "mode": "reward",
+      "quoteOnlyFees": true,
+      "transferFee": {
+        "bps": 300
+      },
+      "flywheel": {
+        "active": true
+      },
+      "imageUrl": "https://gateway.irys.xyz/3KNgu99JvZ961wXUxcZ8LXDXjaWK4651Wo9oUZSA5U4L",
+      "links": {
+        "website": "https://www.stonkfun.xyz/",
+        "twitter": "https://x.com/KnotsOnStonk"
+      },
+      "market": {
+        "priceUsd": 0.01940328592744846,
+        "marketCapUsd": 19403285.927448463,
+        "fdvUsd": 19403285.927448463,
+        "volume24hUsd": 1477671.9569200817,
+        "liquidityUsd": 980821.9387888366,
+        "priceChange24h": -10.864084473240688,
+        "peakMarketCapUsd": 51612421.53199439
+      },
+      "status": "graduated",
+      "graduationProgress": 1,
+      "graduatedAt": "2026-09-06T14:47:58.750Z",
+      "createdAt": "2026-09-05T16:34:45.099Z"
+    },
+    "launch": {
+      "mint": "8RVBk8vxLiUHueLUW1f4izFVqN3nWippLhkohKg6EGkS",
+      "pool": "GeNDy5afAWz7S9w2tMLgpK3xQqXjeDaCvYV9h8joEmjo",
+      "name": "KNOTS",
+      "symbol": "KNOTS",
+      "creator": "FYL2HTK3wZyDxdXwEMvCNKhS5J4LyvbggBr6Yj23SUs1",
+      "quote": {
+        "mint": "6GmAFSYs4gk3FDao5FzzySQpPZaWsa4rUJHacpMpUNgx",
+        "symbol": "STONK"
+      },
+      "launchpad": "launchlab",
+      "mode": "reward",
+      "transferFee": {
+        "bps": 300
+      },
+      "logoUrl": "https://gateway.irys.xyz/3KNgu99JvZ961wXUxcZ8LXDXjaWK4651Wo9oUZSA5U4L",
+      "startMarketCapUsd": 2885.4188231475587,
+      "targetMarketCapUsd": 2885.4188231475587,
+      "createdAt": "2026-09-05T16:34:18.065Z"
+    },
+    "network": "mainnet-beta"
+  },
+  "meta": {
+    "generatedAt": "2026-09-14T16:19:14.622Z"
+  }
+}

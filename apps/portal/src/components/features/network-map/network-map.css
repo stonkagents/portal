@@ -1,0 +1,166 @@
+/*
+ * Network Map CSS — adapted from the StonkAgents dashboard kit
+ * Uses project design tokens where possible
+ */
+
+/* ===========================================================
+   VARIANT A: Card layout (gallery page — self-contained box)
+   =========================================================== */
+.network-map {
+  background: var(--color-bg-void, #080a0f);
+  border: 1px solid var(--color-border-default, #1e2530);
+  border-radius: var(--radius-md, 8px);
+  position: relative;
+  overflow: hidden;
+  height: 280px;
+}
+
+@media (min-width: 600px) {
+  .network-map {
+    height: 380px;
+  }
+}
+
+@media (min-width: 900px) {
+  .network-map {
+    height: 460px;
+  }
+}
+
+/* ===========================================================
+   VARIANT B: Hero background (landing page — absolute fill)
+   =========================================================== */
+.hero__map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  overflow: visible;
+  background: var(--color-bg-void, #080a0f);
+}
+
+/* ===========================================================
+   Shared: canvas layers (land painted on resize/data, fx animated)
+   =========================================================== */
+.network-map__layers {
+  position: absolute;
+  inset: 0;
+}
+
+.network-map__land,
+.network-map__fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.network-map__land {
+  pointer-events: none;
+}
+
+.network-map__fx {
+  cursor: crosshair;
+  /* Vertical page scroll keeps working over the map; taps reach the canvas. */
+  touch-action: pan-y;
+}
+
+/* ===========================================================
+   Shared: overlay base (used by the hero agent status box)
+   =========================================================== */
+.map-overlay {
+  position: absolute;
+  z-index: 10;
+  background: var(--color-bg-primary, rgba(8, 10, 15, 0.85));
+  opacity: 0.92;
+  border: 1px solid var(--color-border-default, #1e2530);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-secondary, #708090);
+  pointer-events: none;
+}
+
+/* ===========================================================
+   Tooltip (fixed, moved with a transform from the renderer)
+   =========================================================== */
+#country-tooltip {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  background: rgba(8, 10, 15, 0.95);
+  border: 1px solid var(--color-accent-green, #00ff00);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  pointer-events: none;
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.12);
+  min-width: 180px;
+  will-change: transform;
+}
+
+.tip-country {
+  font-weight: 700;
+  color: var(--color-accent-green, #00ff00);
+  margin-bottom: 2px;
+  font-size: 12px;
+}
+
+.tip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 2px 0;
+  color: var(--color-text-secondary, #708090);
+}
+
+/* ===========================================================
+   Layout overrides per page (applied via parent class)
+   =========================================================== */
+
+/* Home page: the agent status overlay is desktop only (900px+) */
+.network-map-home .agent-status-overlay {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .network-map-home .agent-status-overlay {
+    display: flex;
+  }
+}
+
+/* Agent Status Comparison overlay */
+.agent-status-overlay {
+  position: absolute;
+  bottom: 16px;
+  right: 470px;
+  gap: 24px;
+  align-items: center;
+  background: rgba(8, 10, 15, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 37, 48, 0.6);
+  border-radius: 8px;
+  padding: 16px 24px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Phones: the home map is the backdrop behind the hero card; keep the world visible above the card. */
+@media (max-width: 599px) {
+  .network-map-home.hero__map::after {
+    content: '';
+    position: absolute;
+    inset: 55% 0 0 0;
+    background: linear-gradient(to bottom, transparent, var(--color-bg-void, #080a0f) 70%);
+    pointer-events: none;
+    z-index: 2;
+  }
+}
