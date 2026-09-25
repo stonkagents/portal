@@ -76,7 +76,20 @@ const makePacksRaw = (): PortalPack[] => [
     icon: 'zap',
     item_count: 7,
     items: [
-      { filename: 'web-search.claw-tool', type: 'claw-tool', title: 'Web Search', description: 'Search the web' },
+      {
+        id: 'web-search',
+        filename: 'web-search.claw-tool',
+        type: 'claw-tool',
+        title: 'Web Search',
+        description: 'Search the web',
+        version: '1.0.0',
+        cid: 'bafkrei1',
+        sha256: 'abc',
+        size: 4096,
+        target: 'skills/web-search/',
+        touches: 'Writes <state>/skills/web-search/ (1 file).',
+      },
+      /* A catalog that predates the install path: no id, no pin, so nothing to install. */
       { filename: 'code-review.claw-skill', type: 'claw-skill', title: 'Code Review', description: 'Review code' },
     ],
   },
@@ -113,14 +126,28 @@ describe('transformPacks', () => {
     expect(result[0].icon).toBe('zap');
   });
 
-  it('carries the catalog items and invents no install or size figures', () => {
+  it('carries what the catalog pins for an item, and invents no install figures', () => {
     const result = transformPacks(makePacksRaw());
-    expect(result[0].items).toEqual([
-      { filename: 'web-search.claw-tool', type: 'claw-tool', title: 'Web Search', description: 'Search the web' },
-      { filename: 'code-review.claw-skill', type: 'claw-skill', title: 'Code Review', description: 'Review code' },
-    ]);
+    expect(result[0].items[0]).toEqual({
+      id: 'web-search',
+      filename: 'web-search.claw-tool',
+      type: 'claw-tool',
+      title: 'Web Search',
+      description: 'Search the web',
+      version: '1.0.0',
+      cid: 'bafkrei1',
+      size: 4096,
+      touches: 'Writes <state>/skills/web-search/ (1 file).',
+      packId: 'starter-pack',
+      packTitle: 'Starter Pack',
+    });
     expect(result[0]).not.toHaveProperty('installs');
     expect(result[0]).not.toHaveProperty('size');
+  });
+
+  it('leaves an item the catalog cannot install empty rather than inventing an id or a pin', () => {
+    const result = transformPacks(makePacksRaw());
+    expect(result[0].items[1]).toMatchObject({ id: '', cid: '', version: '', size: 0, touches: '' });
   });
 
   it('handles empty packs array', () => {

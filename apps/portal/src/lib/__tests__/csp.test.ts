@@ -17,7 +17,7 @@ vi.mock('@/lib/config/app.config', () => ({
   },
 }));
 
-import { connectSources, CSP } from '../csp';
+import { connectSources, CSP, TURNSTILE_ORIGIN } from '../csp';
 
 describe('connect-src', () => {
   it('allows the agent and controller origins the env names, with their websocket forms', () => {
@@ -32,5 +32,21 @@ describe('connect-src', () => {
   it('is what the meta tag carries', () => {
     expect(CSP).toContain(`connect-src ${connectSources()}`);
     expect(CSP).toContain("object-src 'none'");
+  });
+});
+
+/**
+ * Production sets NEXT_PUBLIC_TURNSTILE_SITE_KEY, so the human check on the feedback and
+ * interest forms loads a Cloudflare script and renders a frame. With the origin missing from
+ * script-src the script was blocked, no token was produced, and the tracker answered every
+ * send with 403 TURNSTILE_FAILED (production, 2026-09-23).
+ */
+describe('Turnstile', () => {
+  it('may load its script, open its frame and reach its API', () => {
+    const script = CSP.split('; ').find(d => d.startsWith('script-src '));
+    const frame = CSP.split('; ').find(d => d.startsWith('frame-src '));
+    expect(script).toContain(TURNSTILE_ORIGIN);
+    expect(frame).toContain(TURNSTILE_ORIGIN);
+    expect(connectSources().split(' ')).toContain(TURNSTILE_ORIGIN);
   });
 });

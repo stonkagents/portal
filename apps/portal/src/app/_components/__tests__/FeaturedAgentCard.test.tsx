@@ -2,13 +2,24 @@
  * Featured $AGENT card: the four-stat header row off the stonk.fun pool
  * (placeholders while loading and for the 24h pair, which needs an indexer),
  * the honest error when the pool cannot be read, the mascot, the buy CTA and
- * the copy-address button.
+ * the copy-address button; and the "coming soon" preview before the mint is
+ * configured: the same frame over ghost regions, the copy, the two links, and
+ * no read of the pool, the chain or the ledger.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FeaturedAgentCard, formatChange, formatUsdCompact, formatCount, truncateMint } from '../FeaturedAgentCard';
+import {
+  COMING_SOON_BARS,
+  COMING_SOON_FLYWHEEL,
+  COMING_SOON_VALUE,
+  FLYWHEEL_DOCS_PATH,
+  FeaturedAgentComingSoon,
+  xHandle,
+} from '../FeaturedAgentComingSoon';
+import { FEATURED_STAT_LABELS } from '../FeaturedAgentFrame';
 import { featuredAgentToken } from '@/lib/agent-token';
 import { agentStatsFromStonkfun } from '@/lib/api/hooks/use-agent-token';
 import { parseStonkfunToken } from '@/lib/api/stonkfun';
@@ -28,6 +39,19 @@ const mockUseAgentToken = vi.fn();
 vi.mock('@/lib/api/hooks/use-agent-token', async () => {
   const actual = await vi.importActual<Record<string, unknown>>('@/lib/api/hooks/use-agent-token');
   return { ...actual, useAgentToken: (mint: string | null) => mockUseAgentToken(mint) };
+});
+
+// The chain and ledger reads behind the panel, spied so the preview can prove it never reaches them.
+const mockMintInfo = vi.fn((..._args: unknown[]) => ({ data: null }));
+const mockAllHolders = vi.fn((..._args: unknown[]) => ({ data: null }));
+vi.mock('@/app/tokens/_lib/use-token-chain-data', () => ({
+  useMintInfo: (...args: unknown[]) => mockMintInfo(...args),
+  useAllHolders: (...args: unknown[]) => mockAllHolders(...args),
+}));
+const mockBurnPlan = vi.fn((..._args: unknown[]) => ({ status: 'idle' }));
+vi.mock('@/lib/api/hooks/use-agent-ledgers', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>('@/lib/api/hooks/use-agent-ledgers');
+  return { ...actual, useBurnPlan: (...args: unknown[]) => mockBurnPlan(...args) };
 });
 
 const mockNetwork = vi.fn();
@@ -100,7 +124,7 @@ describe('FeaturedAgentCard', () => {
     mockUseAgentToken.mockReturnValue(LIVE);
     render(<FeaturedAgentCard token={featuredAgentToken(MINT)} />);
     expect(screen.getByTestId('featured-mcap')).toHaveTextContent('3.3K SOL');
-    expect(screen.getByText('$SOL')).toBeInTheDocument();
+    expect(screen.getByText('$STONK')).toBeInTheDocument();
   });
 
   it('fills holders from the chain', () => {
@@ -141,7 +165,7 @@ describe('FeaturedAgentCard', () => {
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('$AGENT');
     expect(screen.getByText("The Network's token")).toBeInTheDocument();
     expect(screen.getByText('StonkAgents')).toBeInTheDocument();
-    expect(screen.getByText('$SOL')).toBeInTheDocument();
+    expect(screen.getByText('$STONK')).toBeInTheDocument();
     expect(screen.getByTestId('featured-stats')).toHaveAttribute('aria-busy', 'true');
     expect(screen.getByTestId('featured-mcap')).toHaveTextContent('-');
     expect(screen.getByTestId('featured-holders')).toHaveTextContent('-');
@@ -158,7 +182,7 @@ describe('FeaturedAgentCard', () => {
     render(<FeaturedAgentCard token={featuredAgentToken(MINT)} />);
     expect(screen.getByTestId('featured-mcap')).toHaveTextContent('$3.1K');
     expect(screen.getByTestId('featured-holders')).toHaveTextContent('17');
-    expect(screen.getByText('$SOL')).toBeInTheDocument();
+    expect(screen.getByText('$STONK')).toBeInTheDocument();
     // The network token wears the brand mascot regardless of the tracker image.
     expect(screen.queryByTestId('featured-image')).toBeNull();
     expect(screen.getByTestId('featured-mascot')).toBeInTheDocument();
@@ -211,6 +235,150 @@ describe('FeaturedAgentCard', () => {
     fireEvent.click(copy);
     expect(writeText).toHaveBeenCalledWith(MINT);
     expect(addToast).toHaveBeenCalledWith(expect.objectContaining({ title: 'Address copied', variant: 'success' }));
+  });
+});
+
+describe('FeaturedAgentCard before the token is live (no mint configured)', () => {
+  beforeEach(() => {
+    mockUseAgentToken.mockReset().mockReturnValue(LOADING);
+    mockNetwork.mockReset().mockReturnValue(NETWORK);
+  });
+
+  it("renders the live card's frame and header in the coming-soon state, the accent pill, and no dashes", () => {
+    render(<FeaturedAgentCard token={null} />);
+    const card = screen.getByTestId('featured-agent-card');
+    expect(card).toHaveAttribute('data-state', 'coming-soon');
+    expect(card).toHaveAttribute('aria-labelledby', 'featured-agent-title');
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('$AGENT');
+    expect(screen.getByText("The Network's token")).toBeInTheDocument();
+    expect(screen.getByText('StonkAgents')).toBeInTheDocument();
+    const badge = screen.getByTestId('featured-coming-soon-badge');
+    expect(badge).toHaveTextContent('Coming soon');
+    expect(badge.className).toContain('text-accent-green');
+    expect(screen.getByTestId('featured-mascot')).toBeInTheDocument();
+    // En dash and em dash, by code point so the source carries neither.
+    expect(card.textContent).not.toMatch(new RegExp(`[${String.fromCharCode(0x2013, 0x2014)}]`));
+  });
+
+  it('ghosts every region of the live card: the four stats, the ring, the flywheel sentence and a bar per day', () => {
+    render(<FeaturedAgentCard token={null} />);
+    // The header stats, in the live order, each reading "soon" in the muted token.
+    const stats = screen.getByTestId('featured-ghost-stats');
+    expect(stats).toHaveAttribute('aria-hidden', 'true');
+    expect(Array.from(stats.querySelectorAll('dt')).map(dt => dt.textContent)).toEqual([...FEATURED_STAT_LABELS]);
+    const values = screen.getAllByTestId('featured-ghost-stat');
+    expect(values).toHaveLength(4);
+    for (const value of values) {
+      expect(value).toHaveTextContent(COMING_SOON_VALUE);
+      expect(value.className).toContain('text-text-tertiary');
+    }
+    // The ring: an outline with "Supply" and "Burned" both reading "soon"; not a progressbar.
+    const ring = screen.getByTestId('featured-ghost-ring');
+    expect(ring.querySelector('svg circle')).not.toBeNull();
+    expect(ring).toHaveTextContent(/Supply\s*soon\s*Burned\s*soon/);
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    // The flywheel block and its sentence.
+    const flywheel = screen.getByTestId('featured-ghost-flywheel');
+    expect(flywheel).toHaveTextContent('Flywheel');
+    expect(flywheel).toHaveTextContent(COMING_SOON_FLYWHEEL);
+    expect(COMING_SOON_FLYWHEEL).toBe(
+      '~0.05% of supply burns every hour for 15 days, plus 50% of platform fees. Live from launch day.',
+    );
+    // The chart: fifteen faint bars, day 1 to day 15, no axis figures and no next-burn marker.
+    expect(screen.getAllByTestId('featured-ghost-bar')).toHaveLength(COMING_SOON_BARS);
+    expect(COMING_SOON_BARS).toBe(15);
+    expect(screen.getByTestId('featured-ghost-chart')).toHaveTextContent(/day 1\s*day 15/);
+    expect(screen.queryByTestId('burn-chart-next-marker')).toBeNull();
+    // A preview, not a loading state.
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.getByTestId('featured-agent-card').querySelector('[aria-busy="true"], .animate-pulse, .animate-spin')).toBeNull();
+  });
+
+  it('carries no closing copy line, only the doors', () => {
+    render(<FeaturedAgentCard token={null} />);
+    expect(screen.queryByTestId('featured-coming-soon')?.querySelector('p') ?? null).toBeNull();
+    expect(screen.queryByText(/launches on stonk.fun/)).toBeNull();
+  });
+
+  it('links to the X profile and the flywheel docs when the build names them, in new tabs', () => {
+    render(
+      <FeaturedAgentComingSoon
+        xUrl="https://x.com/stonkagents"
+        flywheelDocsUrl="https://docs.stonkagents.com/guides/token-agents/#the-network-token-section"
+      />,
+    );
+    const follow = screen.getByTestId('featured-coming-soon-follow');
+    expect(follow).toHaveTextContent('Follow @stonkagents');
+    expect(follow).toHaveAttribute('href', 'https://x.com/stonkagents');
+    expect(follow).toHaveAttribute('target', '_blank');
+    expect(follow).toHaveAttribute('rel', 'noopener noreferrer');
+    const docs = screen.getByTestId('featured-coming-soon-docs');
+    expect(docs).toHaveTextContent('How the flywheel works');
+    expect(docs).toHaveAttribute('href', 'https://docs.stonkagents.com/guides/token-agents/#the-network-token-section');
+    expect(docs).toHaveAttribute('target', '_blank');
+    expect(docs).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.getAllByRole('link')).toHaveLength(2);
+    expect(FLYWHEEL_DOCS_PATH).toBe('/guides/token-agents/#the-network-token-section');
+  });
+
+  it('renders neither link while the build names no X profile and docs are disabled', () => {
+    render(<FeaturedAgentComingSoon xUrl="" flywheelDocsUrl={null} />);
+    expect(screen.queryByTestId('featured-coming-soon-follow')).toBeNull();
+    expect(screen.queryByTestId('featured-coming-soon-docs')).toBeNull();
+    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.queryByTestId('featured-coming-soon')).toBeNull();
+  });
+
+  it('names the handle after the X URL, falling back to stonkagents', () => {
+    expect(xHandle('https://x.com/stonkagents')).toBe('stonkagents');
+    expect(xHandle('https://twitter.com/@StonkAgents/')).toBe('StonkAgents');
+    expect(xHandle('https://x.com')).toBe('stonkagents');
+    expect(xHandle('not a url')).toBe('stonkagents');
+  });
+
+  it('shows no live stats, no buy button, no address, no panel and no error line', () => {
+    render(<FeaturedAgentCard token={null} />);
+    expect(screen.queryByTestId('featured-stats')).toBeNull();
+    expect(screen.queryByTestId('featured-buy')).toBeNull();
+    expect(screen.queryByTestId('featured-swap-external')).toBeNull();
+    expect(screen.queryByTestId('token-copy-address')).toBeNull();
+    expect(screen.queryByTestId('agent-token-panel')).toBeNull();
+    expect(screen.queryByTestId('featured-pool-error')).toBeNull();
+    expect(screen.queryByTestId('featured-ledger-error')).toBeNull();
+  });
+
+  it('reads nothing: neither the pool hook, the network-data hook, the chain reads nor the burn ledger is called', () => {
+    mockMintInfo.mockClear();
+    mockAllHolders.mockClear();
+    mockBurnPlan.mockClear();
+    render(<FeaturedAgentCard token={null} compact />);
+    expect(mockUseAgentToken).not.toHaveBeenCalled();
+    expect(mockNetwork).not.toHaveBeenCalled();
+  });
+
+  it('is what the pages get from featuredAgentToken() while NEXT_PUBLIC_AGENT_MINT is empty', async () => {
+    vi.resetModules();
+    expect(screen.queryByTestId('burn-panel')).toBeNull();
+    vi.stubEnv('NEXT_PUBLIC_AGENT_MINT', '');
+    try {
+      const mod = await import('@/lib/agent-token');
+      expect(mod.AGENT_CONFIGURED).toBe(false);
+      expect(mod.featuredAgentToken()).toBeNull();
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
+    expect(mockMintInfo).not.toHaveBeenCalled();
+    expect(mockAllHolders).not.toHaveBeenCalled();
+    expect(mockBurnPlan).not.toHaveBeenCalled();
+  });
+
+  it('keeps the compact variant the same card with the tighter frame', () => {
+    render(<FeaturedAgentCard token={null} compact />);
+    const card = screen.getByTestId('featured-agent-card');
+    expect(card.className).not.toContain('border-b');
+    expect(screen.getByTestId('featured-ghost-panel')).toBeInTheDocument();
+    expect(screen.queryByText(/launches on stonk.fun/)).toBeNull();
   });
 });
 

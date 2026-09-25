@@ -32,7 +32,7 @@ import { cn } from '@/lib/utils/cn';
 import { useWalletService } from '@/lib/wallet';
 import { getPricesUsd } from '@/lib/api/price';
 import { uploadMetadata } from '@/lib/api/launches';
-import { isMockLaunch, prepareLaunch, sendAndConfirm } from '@/lib/launchlab/build-launch';
+import { completeLaunchSignatures, isMockLaunch, prepareLaunch, sendAndConfirm } from '@/lib/launchlab/build-launch';
 import { classifyLaunchError, logErrorChain } from '@/lib/launchlab/errors';
 import { normalizeCluster, useLaunchConfig, type LaunchConfig } from '@/lib/launchlab/launch-config';
 import { computeLaunchSummary, curveShape } from '@/lib/launchlab/pricing';
@@ -404,7 +404,9 @@ export function LaunchForm({ onLaunched, onConfirmed, existingSymbols = [] }: La
       let signature: string;
       if (prepared.transaction) {
         setPhase('signing');
-        const signed = await wallet.sign(prepared.transaction);
+        // The wallet signs first, on an unsigned transaction; the mint and the
+        // SDK's signers are added to what it returns. Its message is not touched.
+        const signed = completeLaunchSignatures(await wallet.sign(prepared.transaction), prepared.signers);
         setPhase('confirming');
         signature = await sendAndConfirm(signed, {
           blockhash: prepared.blockhash,

@@ -7,7 +7,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { AGENT_MINT, AGENT_QUOTE_MINT } from '@/lib/agent-token';
+import { AGENT_MINT as CONFIGURED_MINT, AGENT_QUOTE_MINT } from '@/lib/agent-token';
 import { launched, pool } from './fixtures';
 
 const useParams = vi.fn();
@@ -92,6 +92,9 @@ import { TokenDetailClient } from '../TokenDetailClient';
 
 const missing = { token: null, isLoading: false, isFetched: true, isError: false, refetch: vi.fn() };
 /** The $AGENT pool as stonk.fun created it: SOL quote, their platform config. */
+// The suite setup names the mint (src/test/setup.ts), so the build under test has $AGENT configured.
+const AGENT_MINT = CONFIGURED_MINT!;
+
 const stonkfunPool = {
   ...pool,
   mint: AGENT_MINT,
@@ -131,7 +134,7 @@ describe('TokenDetailClient — $AGENT on an external pool', () => {
     expect(usePoolState).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
     // Identity and pair from the environment; platform from the pool account.
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('StonkAgents');
-    expect(screen.getByTestId('token-pair')).toHaveTextContent('AGENT / SOL');
+    expect(screen.getByTestId('token-pair')).toHaveTextContent('AGENT / STONK');
     expect(screen.getByTestId('token-platform-chip')).toHaveTextContent('on stonk.fun');
     expect(screen.queryByTestId('token-age')).toBeNull();
     // The trade panel gets the pool itself, platform config and all, and no off-site link.
@@ -143,7 +146,7 @@ describe('TokenDetailClient — $AGENT on an external pool', () => {
     // The tape comes off the RPC, listed on the pool, once the pool is known.
     expect(useTokenTape).toHaveBeenLastCalledWith(AGENT_MINT, AGENT_QUOTE_MINT, stonkfunPool.poolId, { enabled: true, source: 'rpc' });
     // No transfer tax on a stonk.fun launch: no fee on the pair line, no holder rewards stat.
-    expect(screen.getByTestId('chart-pair')).toHaveTextContent('AGENT / SOL · launchlab curve');
+    expect(screen.getByTestId('chart-pair')).toHaveTextContent('AGENT / STONK · launchlab curve');
     expect(screen.getByTestId('chart-pair')).not.toHaveTextContent('fee');
     expect(screen.queryByTestId('token-holder-rewards')).toBeNull();
     expect(screen.getByTestId('token-chart')).toHaveAttribute('data-candle-source', 'tape');

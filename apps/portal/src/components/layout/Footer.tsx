@@ -126,6 +126,19 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              {config.features.docsEnabled && (
+                <li>
+                  <a
+                    href={config.links.docs}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-testid="footer-docs"
+                    className={LINK_CLASS}
+                  >
+                    {t('footer.docs')}
+                  </a>
+                </li>
+              )}
               <li>
                 <button
                   type="button"

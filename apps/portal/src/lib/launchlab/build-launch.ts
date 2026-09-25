@@ -75,8 +75,14 @@ export interface PreparedLaunchSummary {
 }
 
 export interface PreparedLaunch {
-  /** Null on the mock path. Otherwise the transaction the wallet signs last. */
+  /**
+   * Null on the mock path. Otherwise the transaction the wallet signs FIRST: it
+   * carries no signatures yet. The mint and the SDK's signers are applied to
+   * the wallet's returned transaction by completeLaunchSignatures.
+   */
   transaction: VersionedTransaction | Transaction | null;
+  /** Everyone who signs after the wallet: the mint keypair and any SDK signer. Empty on the mock path. */
+  signers: Signer[];
   mintKeypair: Keypair;
   mint: string;
   poolId: string;
@@ -151,6 +157,7 @@ function mockLaunch(params: PrepareLaunchParams): PreparedLaunch {
 
   return {
     transaction: null,
+    signers: [],
     mintKeypair,
     mint,
     poolId,
@@ -311,13 +318,18 @@ export async function prepareLaunch(params: PrepareLaunchParams): Promise<Prepar
     lookupTables,
   );
 
+  // Unsigned on purpose. Phantom reviews a multi-signer transaction by signing it
+  // first and expecting the other signatures to be added to that same message
+  // afterwards; a transaction that arrives already carrying the mint's signature
+  // is what its simulation warned about. The mint and the SDK's signers go on in
+  // completeLaunchSignatures, after the wallet has returned the transaction.
   const transaction = new VersionedTransaction(message);
   const signers: Signer[] = [mintKeypair, ...(built.signers[0] ?? [])];
   const unique = new Map(signers.map(s => [s.publicKey.toBase58(), s]));
-  transaction.sign([...unique.values()]);
 
   // Before the wallet is opened: the transaction must fit, and the node must
   // agree it would land. A failure here is ours to explain, not Phantom's.
+  // Simulated unsigned (sigVerify is off), so the order above costs nothing here.
   await preflightLaunch(transaction, connection);
 
   const poolId = built.extInfo.address.poolId.toBase58();
@@ -326,6 +338,7 @@ export async function prepareLaunch(params: PrepareLaunchParams): Promise<Prepar
 
   return {
     transaction,
+    signers: [...unique.values()],
     mintKeypair,
     mint,
     poolId,
@@ -333,6 +346,22 @@ export async function prepareLaunch(params: PrepareLaunchParams): Promise<Prepar
     lastValidBlockHeight,
     summary: baseSummary(params, mint, poolId, false),
   };
+}
+
+/**
+ * Adds the mint's and the SDK's signatures to the transaction the wallet has
+ * already signed. Only signature slots are written; the message is the one the
+ * wallet approved, byte for byte, and must never be rebuilt, recompiled or
+ * re-blockhashed here. Returns the same object for the send.
+ */
+export function completeLaunchSignatures<T extends VersionedTransaction | Transaction>(signed: T, signers: Signer[]): T {
+  if (signers.length === 0) return signed;
+  if (signed instanceof VersionedTransaction) {
+    signed.sign(signers);
+  } else {
+    signed.partialSign(...signers);
+  }
+  return signed;
 }
 
 /** Program log lines worth showing: the last few, which carry the failing instruction's message. */

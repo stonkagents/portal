@@ -24,6 +24,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { trackerEndpoint } from '@/config';
+import { AGENT_CONFIGURED } from '@/lib/agent-token';
 
 export const BURN_PLAN_PATH = '/api/v1/agent-token/burnplan';
 
@@ -196,17 +197,22 @@ export function ledgerForMint(state: LedgerState<BurnPlan>, mint: string | null 
   return { status: 'error', error: new LedgerMintMismatchError(state.data.mint, mint) };
 }
 
-/** The burn plan as UI state. A 404 becomes `not-built` and is not retried as an error. */
+/**
+ * The burn plan as UI state. A 404 becomes `not-built` and is not retried as
+ * an error. Idle, with no request made, while the build names no $AGENT mint
+ * (`AGENT_CONFIGURED` false): there is no ledger to read before the launch.
+ */
 export function useBurnPlan(enabled = true): LedgerState<BurnPlan> {
+  const active = enabled && AGENT_CONFIGURED;
   const query = useQuery({
     queryKey: burnPlanKey,
     queryFn: ({ signal }) => fetchBurnPlan(signal),
-    enabled,
+    enabled: active,
     staleTime: LEDGER_POLL_MS,
     retry: ledgerRetry,
     retryDelay: ledgerRetryDelay,
     refetchInterval: query => (query.state.data ? LEDGER_POLL_MS : false),
     refetchOnWindowFocus: false,
   });
-  return toState(query, enabled);
+  return toState(query, active);
 }

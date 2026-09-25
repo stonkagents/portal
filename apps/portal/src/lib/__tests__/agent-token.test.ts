@@ -6,7 +6,7 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
-const WSOL = 'So11111111111111111111111111111111111111112';
+const STONK = '6GmAFSYs4gk3FDao5FzzySQpPZaWsa4rUJHacpMpUNgx';
 
 const load = async (env: Record<string, string> = {}) => {
   vi.resetModules();
@@ -44,19 +44,51 @@ afterEach(() => {
 });
 
 describe('agent-token', () => {
-  it('falls back to the default mint, the token page, a derived pool and a SOL quote', async () => {
+  it('is not configured with an empty mint: no mint, no page, no buy link, no identity, and no mint is the agent mint', async () => {
     const mod = await load();
+    expect(mod.AGENT_CONFIGURED).toBe(false);
+    expect(mod.AGENT_MINT).toBeNull();
+    expect(mod.AGENT_PAGE_HREF).toBeNull();
+    expect(mod.AGENT_TRADE_HREF).toBeNull();
+    expect(mod.AGENT_BUY_HREF).toBeNull();
+    expect(mod.AGENT_STONKFUN_URL).toBeNull();
+    expect(mod.AGENT_JUPITER_URL).toBeNull();
+    expect(mod.AGENT_EXTERNAL_BUY_URL).toBeNull();
+    expect(mod.featuredAgentToken()).toBeNull();
+    expect(mod.isAgentMint(null)).toBe(false);
+    expect(mod.isAgentMint(undefined)).toBe(false);
+    expect(mod.isAgentMint('')).toBe(false);
+    expect(mod.isAgentMint('Other')).toBe(false);
+    // The rest of the environment still parses on its own.
     expect(mod.AGENT_SOURCE).toBe('pool');
     expect(mod.AGENT_VIA_STONKFUN).toBe(false);
+    expect(mod.AGENT_POOL_ID).toBeNull();
+    expect(mod.AGENT_QUOTE_MINT).toBe(STONK);
+    expect(mod.agentQuoteSymbol()).toBe('STONK');
+    expect(mod.AGENT_PAIRED_WITH).toBe('STONK');
+    expect(mod.AGENT_TOTAL_SUPPLY).toBeNull();
+  });
+
+  it('stays unconfigured via stonkfun too: a source without a mint names no token page or venue', async () => {
+    const mod = await load({ NEXT_PUBLIC_AGENT_SOURCE: 'stonkfun' });
+    expect(mod.AGENT_CONFIGURED).toBe(false);
+    expect(mod.AGENT_VIA_STONKFUN).toBe(true);
     expect(mod.AGENT_STONKFUN_URL).toBeNull();
+    expect(mod.AGENT_JUPITER_URL).toBeNull();
+    expect(mod.AGENT_BUY_HREF).toBeNull();
+    expect(mod.featuredAgentToken()).toBeNull();
+  });
+
+  it('is configured by the mint alone: the token page, a derived pool and a SOL quote follow', async () => {
+    const mod = await load({ NEXT_PUBLIC_AGENT_MINT: 'tRqrTWVmyZD7pqgu8jkBJodLyCKYJhC7Wbgi1MnT9gSr' });
+    expect(mod.AGENT_CONFIGURED).toBe(true);
     expect(mod.AGENT_MINT).toBe('tRqrTWVmyZD7pqgu8jkBJodLyCKYJhC7Wbgi1MnT9gSr');
-    expect(mod.AGENT_MINT).toBe(mod.DEFAULT_AGENT_MINT);
-    expect(mod.AGENT_BUY_HREF).toBe(`/tokens/${mod.DEFAULT_AGENT_MINT}/`);
+    expect(mod.AGENT_PAGE_HREF).toBe('/tokens/tRqrTWVmyZD7pqgu8jkBJodLyCKYJhC7Wbgi1MnT9gSr/');
+    expect(mod.AGENT_TRADE_HREF).toBe('/tokens/tRqrTWVmyZD7pqgu8jkBJodLyCKYJhC7Wbgi1MnT9gSr/#trade');
+    expect(mod.AGENT_BUY_HREF).toBe(mod.AGENT_PAGE_HREF);
     expect(mod.AGENT_EXTERNAL_BUY_URL).toBeNull();
     expect(mod.AGENT_POOL_ID).toBeNull();
-    expect(mod.AGENT_QUOTE_MINT).toBe(WSOL);
-    expect(mod.agentQuoteSymbol()).toBe('SOL');
-    expect(mod.AGENT_TOTAL_SUPPLY).toBeNull();
+    expect(mod.AGENT_QUOTE_MINT).toBe(STONK);
     expect(mod.isAgentMint(mod.AGENT_MINT)).toBe(true);
     expect(mod.isAgentMint('Other')).toBe(false);
   });
@@ -68,6 +100,7 @@ describe('agent-token', () => {
       NEXT_PUBLIC_AGENT_QUOTE_MINT: '6GmAFSYs4gk3FDao5FzzySQpPZaWsa4rUJHacpMpUNgx',
       NEXT_PUBLIC_AGENT_TOTAL_SUPPLY: '1000000000',
     });
+    expect(mod.AGENT_CONFIGURED).toBe(true);
     expect(mod.AGENT_MINT).toBe('MintFromEnv111');
     expect(mod.AGENT_BUY_HREF).toBe('/tokens/MintFromEnv111/');
     expect(mod.AGENT_POOL_ID).toBe('PoolFromEnv');
@@ -76,18 +109,27 @@ describe('agent-token', () => {
     expect(mod.AGENT_TOTAL_SUPPLY).toBe(1_000_000_000);
   });
 
-  it('prefers NEXT_PUBLIC_AGENT_BUY_URL when set', async () => {
-    const mod = await load({ NEXT_PUBLIC_AGENT_BUY_URL: 'https://stonk.fun/token/AGENT' });
-    expect(mod.AGENT_BUY_HREF).toBe('https://stonk.fun/token/AGENT');
-    expect(mod.AGENT_EXTERNAL_BUY_URL).toBe('https://stonk.fun/token/AGENT');
-    expect(mod.AGENT_MINT).toBe(mod.DEFAULT_AGENT_MINT);
+  it('treats a blank mint as unconfigured', async () => {
+    const mod = await load({ NEXT_PUBLIC_AGENT_MINT: '   ' });
+    expect(mod.AGENT_CONFIGURED).toBe(false);
+    expect(mod.AGENT_MINT).toBeNull();
+  });
+
+  it('prefers NEXT_PUBLIC_AGENT_BUY_URL when set, even without a mint', async () => {
+    const configured = await load({ NEXT_PUBLIC_AGENT_MINT: 'MintFromEnv111', NEXT_PUBLIC_AGENT_BUY_URL: 'https://stonk.fun/token/AGENT' });
+    expect(configured.AGENT_BUY_HREF).toBe('https://stonk.fun/token/AGENT');
+    expect(configured.AGENT_EXTERNAL_BUY_URL).toBe('https://stonk.fun/token/AGENT');
+    const unconfigured = await load({ NEXT_PUBLIC_AGENT_MINT: '', NEXT_PUBLIC_AGENT_BUY_URL: 'https://stonk.fun/token/AGENT' });
+    expect(unconfigured.AGENT_CONFIGURED).toBe(false);
+    expect(unconfigured.AGENT_BUY_HREF).toBe('https://stonk.fun/token/AGENT');
   });
 
   it('builds the featured token identity only; the numbers come from the chain', async () => {
-    const { featuredAgentToken, AGENT_MINT } = await load();
+    const { featuredAgentToken, AGENT_MINT } = await load({ NEXT_PUBLIC_AGENT_MINT: 'MintFromEnv111' });
     const token = featuredAgentToken();
-    expect(token).toEqual({ mint: AGENT_MINT, name: 'StonkAgents', symbol: 'AGENT', quoteSymbol: 'SOL' });
+    expect(token).toEqual({ mint: AGENT_MINT, name: 'StonkAgents', symbol: 'AGENT', quoteSymbol: 'STONK' });
     expect(featuredAgentToken('Other').mint).toBe('Other');
+    expect(featuredAgentToken(null)).toBeNull();
   });
 
   it('has no sample market data', async () => {

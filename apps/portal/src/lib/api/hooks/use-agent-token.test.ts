@@ -22,7 +22,10 @@ vi.mock('@/lib/api/hooks/use-stonkfun-token', () => ({ useStonkfunToken: (m: unk
 
 import { agentStatsFromLaunch, agentStatsFromPool, agentStatsFromStonkfun, mergeAgentStats, useAgentToken } from './use-agent-token';
 import { parseStonkfunToken } from '@/lib/api/stonkfun';
-import { AGENT_MINT, AGENT_QUOTE_MINT } from '@/lib/agent-token';
+import { AGENT_MINT as CONFIGURED_MINT, AGENT_QUOTE_MINT } from '@/lib/agent-token';
+
+// The suite setup names the mint (src/test/setup.ts), so the build under test has $AGENT configured.
+const AGENT_MINT = CONFIGURED_MINT!;
 
 const WSOL = 'So11111111111111111111111111111111111111112';
 const MINT = 'AgentMint111111111111111111111111111111111111';

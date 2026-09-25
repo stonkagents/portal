@@ -74,10 +74,12 @@ vi.mock('@/lib/api/price', () => ({
 
 const prepareLaunch = vi.fn();
 const sendAndConfirm = vi.fn();
+const completeLaunchSignatures = vi.fn((tx: unknown, _signers: unknown) => tx);
 const isMockLaunch = vi.fn(() => false);
 vi.mock('@/lib/launchlab/build-launch', () => ({
   prepareLaunch: (...args: unknown[]) => prepareLaunch(...args),
   sendAndConfirm: (...args: unknown[]) => sendAndConfirm(...args),
+  completeLaunchSignatures: (tx: unknown, signers: unknown) => completeLaunchSignatures(tx, signers),
   isMockLaunch: () => isMockLaunch(),
   explorerUrl: (kind: string, id: string) => `https://explorer.example/${kind}/${id}`,
 }));
@@ -162,6 +164,7 @@ beforeEach(() => {
   });
   prepareLaunch.mockResolvedValue({
     transaction: { fake: true },
+    signers: [{ fakeSigner: true }],
     mint: 'MintAAA',
     poolId: 'PoolAAA',
     blockhash: 'bh',
@@ -546,6 +549,10 @@ describe('LaunchForm', () => {
 
     expect(wallet.sign).toHaveBeenCalledWith({ fake: true });
     expect(sendAndConfirm).toHaveBeenCalledWith({ fake: true }, { blockhash: 'bh', lastValidBlockHeight: 1 });
+    // Phantom signs first; the mint and SDK signers are added to what it returned, before the send.
+    expect(completeLaunchSignatures).toHaveBeenCalledWith({ fake: true }, [{ fakeSigner: true }]);
+    expect(completeLaunchSignatures.mock.invocationCallOrder[0]).toBeGreaterThan(wallet.sign.mock.invocationCallOrder[0]);
+    expect(completeLaunchSignatures.mock.invocationCallOrder[0]).toBeLessThan(sendAndConfirm.mock.invocationCallOrder[0]);
 
     expect(recordLaunch).toHaveBeenCalledWith({
       mint: 'MintAAA',

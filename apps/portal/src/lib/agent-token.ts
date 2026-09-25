@@ -16,10 +16,13 @@ import { STONK_MINT } from '@/lib/launchlab/quote-catalog';
  * The mint, the pool and the buy URL are read from the environment at build
  * time (`NEXT_PUBLIC_*` values are inlined by Next). Deliberately NOT part of
  * `src/config` — nothing that shapes a launch lives there.
+ *
+ * An empty `NEXT_PUBLIC_AGENT_MINT` means the token is not configured for
+ * this build (production before the launch): `AGENT_CONFIGURED` is false,
+ * `AGENT_MINT` is null, every $AGENT surface renders its "coming soon" state
+ * and nothing reads a pool, the mint, the holders or a burn ledger. Setting
+ * the mint (and the pool) later restores the full card with no code change.
  */
-
-/** Default $AGENT mint, as shown on the StonkAgents dev site. */
-export const DEFAULT_AGENT_MINT = 'tRqrTWVmyZD7pqgu8jkBJodLyCKYJhC7Wbgi1MnT9gSr';
 
 /**
  * Next inlines a public value only where `process.env.NEXT_PUBLIC_X` is
@@ -46,8 +49,11 @@ function nonEmpty(value: string | undefined): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
-/** The $AGENT mint address. */
-export const AGENT_MINT: string = nonEmpty(process.env.NEXT_PUBLIC_AGENT_MINT) ?? DEFAULT_AGENT_MINT;
+/** The $AGENT mint address, or null when the environment names none (the token is not live yet). */
+export const AGENT_MINT: string | null = nonEmpty(process.env.NEXT_PUBLIC_AGENT_MINT);
+
+/** True when the build names the $AGENT mint. False renders "coming soon" everywhere the token would show. */
+export const AGENT_CONFIGURED: boolean = AGENT_MINT != null;
 
 /* ── Source ─────────────────────────────────────────────────────────────
  * Where the Network token's figures are read from. `pool` (the default)
@@ -78,11 +84,14 @@ export const AGENT_VIA_STONKFUN = AGENT_SOURCE === 'stonkfun';
 export const AGENT_POOL_ID: string | null = nonEmpty(process.env.NEXT_PUBLIC_AGENT_POOL);
 
 /**
- * The quote $AGENT's pool raises in. stonk.fun launches quote in SOL, so the
- * default is wrapped SOL; a devnet build emulating the launch under a second
- * platform config can point this at whatever its pool was created with.
+ * The quote $AGENT's pool raises in. stonk.fun pairs every launch with $STONK,
+ * so the default is the $STONK mint; a devnet build emulating the launch under a
+ * second platform config points this at whatever its stand-in pool was created with.
  */
-export const AGENT_QUOTE_MINT: string = nonEmpty(process.env.NEXT_PUBLIC_AGENT_QUOTE_MINT) ?? WRAPPED_SOL_MINT;
+export const AGENT_QUOTE_MINT: string = nonEmpty(process.env.NEXT_PUBLIC_AGENT_QUOTE_MINT) ?? STONK_MINT;
+
+/** What the network token is paired with, as the UI names it: always $STONK, whatever a stand-in pool holds. */
+export const AGENT_PAIRED_WITH = 'STONK';
 
 /** Best label for the quote without a tracker record to name it. */
 export function agentQuoteSymbol(quoteMint: string = AGENT_QUOTE_MINT): string | null {
@@ -92,7 +101,7 @@ export function agentQuoteSymbol(quoteMint: string = AGENT_QUOTE_MINT): string |
 }
 
 /** The token's page on stonkfun, when that is the source. */
-export const AGENT_STONKFUN_URL: string | null = AGENT_VIA_STONKFUN ? stonkfunTokenUrl(AGENT_MINT) : null;
+export const AGENT_STONKFUN_URL: string | null = AGENT_VIA_STONKFUN && AGENT_MINT ? stonkfunTokenUrl(AGENT_MINT) : null;
 
 /** Jupiter's swap page with the pair pre-filled: quote in, network token out. */
 export function jupiterSwapUrl(inputMint: string, outputMint: string, base: string = 'https://jup.ag'): string {
@@ -105,9 +114,8 @@ export function jupiterSwapUrl(inputMint: string, outputMint: string, base: stri
  * pre-filled: the second door next to the in-app swap (which routes through
  * Jupiter's API for the same pair). Null for the pool source.
  */
-export const AGENT_JUPITER_URL: string | null = AGENT_VIA_STONKFUN
-  ? jupiterSwapUrl(AGENT_QUOTE_MINT, AGENT_MINT, process.env.NEXT_PUBLIC_JUPITER_URL || 'https://jup.ag')
-  : null;
+export const AGENT_JUPITER_URL: string | null =
+  AGENT_VIA_STONKFUN && AGENT_MINT ? jupiterSwapUrl(AGENT_QUOTE_MINT, AGENT_MINT, process.env.NEXT_PUBLIC_JUPITER_URL || 'https://jup.ag') : null;
 
 /**
  * An external venue for the network token: `NEXT_PUBLIC_AGENT_BUY_URL` when
@@ -115,22 +123,23 @@ export const AGENT_JUPITER_URL: string | null = AGENT_VIA_STONKFUN
  */
 export const AGENT_EXTERNAL_BUY_URL: string | null = nonEmpty(process.env.NEXT_PUBLIC_AGENT_BUY_URL) ?? AGENT_JUPITER_URL;
 
-/** The token's page: the same detail page as every other token (trailingSlash). */
-export const AGENT_PAGE_HREF = `/tokens/${AGENT_MINT}/`;
+/** The token's page: the same detail page as every other token (trailingSlash). Null until the mint is configured. */
+export const AGENT_PAGE_HREF: string | null = AGENT_MINT ? `/tokens/${AGENT_MINT}/` : null;
 
-/** The token page, landing on its trade panel. */
-export const AGENT_TRADE_HREF = `${AGENT_PAGE_HREF}#trade`;
+/** The token page, landing on its trade panel. Null until the mint is configured. */
+export const AGENT_TRADE_HREF: string | null = AGENT_PAGE_HREF ? `${AGENT_PAGE_HREF}#trade` : null;
 
 /**
  * Where "Buy $AGENT" goes: the configured venue when `NEXT_PUBLIC_AGENT_BUY_URL`
- * names one; via stonkfun, the in-app swap on the token page; else the token page.
+ * names one; via stonkfun, the in-app swap on the token page; else the token
+ * page. Null while the mint is not configured: the card has no buy button then.
  */
-export const AGENT_BUY_HREF: string =
+export const AGENT_BUY_HREF: string | null =
   nonEmpty(process.env.NEXT_PUBLIC_AGENT_BUY_URL) ?? (AGENT_VIA_STONKFUN ? AGENT_TRADE_HREF : AGENT_PAGE_HREF);
 
-/** True for the Network's own mint. */
+/** True for the Network's own mint. Never true while the mint is not configured. */
 export function isAgentMint(mint: string | null | undefined): boolean {
-  return mint === AGENT_MINT;
+  return AGENT_MINT != null && mint === AGENT_MINT;
 }
 
 /* ── Network-token facts ────────────────────────────────────────────────
@@ -417,8 +426,12 @@ export interface FeaturedAgentToken {
 
 /**
  * The Network's token identity for the pinned card. Every number on the card
- * comes from the chain (`useAgentToken`), never from here.
+ * comes from the chain (`useAgentToken`), never from here. Null when the build
+ * names no mint: the card renders its "coming soon" state for a null token.
  */
-export function featuredAgentToken(mint: string = AGENT_MINT): FeaturedAgentToken {
+export function featuredAgentToken(mint: string): FeaturedAgentToken;
+export function featuredAgentToken(mint?: string | null): FeaturedAgentToken | null;
+export function featuredAgentToken(mint: string | null = AGENT_MINT): FeaturedAgentToken | null {
+  if (mint == null) return null;
   return { mint, name: 'StonkAgents', symbol: 'AGENT', quoteSymbol: agentQuoteSymbol() ?? 'SOL' };
 }

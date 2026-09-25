@@ -21,9 +21,13 @@ import type { LaunchPoolState } from '@/lib/launchlab/pool-state';
 import { normalizeQuoteCategory, QUOTE_CATEGORY_LABELS } from '@/lib/launchlab/quote-catalog';
 import type { GalleryToken } from './gallery-token';
 
-/** The $AGENT token from the environment and, once read, its pool. Pure. */
+/**
+ * The $AGENT token from the environment and, once read, its pool. Pure. Only
+ * built for the Network token's own page, which exists once the mint is
+ * configured; the pool's mint stands in should the environment not name one.
+ */
 export function externalAgentToken(pool: LaunchPoolState | null | undefined): GalleryToken {
-  const identity = featuredAgentToken(AGENT_MINT);
+  const identity = featuredAgentToken(AGENT_MINT ?? pool?.mint ?? '');
   const quoteMint = pool?.quoteMint ?? AGENT_QUOTE_MINT;
   const quoteSymbol = agentQuoteSymbol(quoteMint);
   const category = normalizeQuoteCategory(quoteMint, quoteSymbol === 'SOL' ? 'solana' : null);

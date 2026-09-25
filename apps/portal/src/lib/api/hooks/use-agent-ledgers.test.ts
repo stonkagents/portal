@@ -154,6 +154,23 @@ describe('useBurnPlan', () => {
     await waitFor(() => expect(result.current.status).toBe('error'), { timeout: 6_000 });
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
+
+  it('stays idle and never calls the tracker while the build names no $AGENT mint', async () => {
+    fetchMock.mockResolvedValue(reply(200, plan));
+    vi.resetModules();
+    vi.stubEnv('NEXT_PUBLIC_AGENT_MINT', '');
+    try {
+      const fresh = await import('./use-agent-ledgers');
+      const { result } = renderHook(() => fresh.useBurnPlan(), { wrapper: wrapper() });
+      expect(result.current).toEqual({ status: 'idle' });
+      await new Promise(resolve => setTimeout(resolve, 20));
+      expect(result.current).toEqual({ status: 'idle' });
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
+  });
 });
 
 describe('ledgerForMint', () => {

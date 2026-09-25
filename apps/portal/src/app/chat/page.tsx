@@ -456,9 +456,42 @@ export default function ChatPage() {
                 onRemoveFromQueue={chat.removeFromQueue}
               />
               <div className="border-t border-border-default bg-bg-secondary px-4 py-3 shrink-0">
+                {toolsPending ? (
+                  <CommandToolsNotice className="max-w-3xl mx-auto" />
+                ) : (
+                  <div className="flex items-end gap-2 max-w-3xl mx-auto">
+                    <textarea
+                      data-testid="agent-chat-input"
+                      ref={textareaRef}
+                      rows={1}
+                      value={draft}
+                      onChange={handleChange}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Message your agent (↵ to send, Shift+↵ for line break)"
+                      className="flex-1 min-h-[44px] max-h-[160px] px-3 py-2.5 bg-bg-primary border-2 border-accent-green/40 rounded-lg text-sm text-text-primary font-mono outline-none resize-none placeholder:text-text-tertiary focus:border-accent-green shadow-[0_0_0_1px_rgba(0,255,0,0.08)] transition-colors"
+                    />
+                    <button
+                      data-testid="agent-chat-send"
+                      onClick={handleSend}
+                      disabled={!hasDraft || !daemonConnected}
+                      title={!daemonConnected ? 'Start your agent to send messages' : 'Send message'}
+                      className={cn(
+                        'flex items-center justify-center w-11 h-11 rounded-lg transition-all shrink-0',
+                        hasDraft && daemonConnected
+                          ? 'bg-accent-green text-bg-primary hover:brightness-110 active:brightness-90'
+                          : daemonConnected
+                            ? 'bg-accent-green/25 text-accent-green border border-accent-green/50 cursor-default'
+                            : 'bg-bg-tertiary text-text-tertiary border border-border-default cursor-not-allowed',
+                      )}
+                    >
+                      <Icon name="send" size="sm" />
+                    </button>
+                    <span className="text-[11px] text-text-tertiary hidden sm:block">↵</span>
+                  </div>
+                )}
                 {/* Model toggle (Fast vs Detailed)
                       Detailed states: paid >= 75 → cost. paid < 75 + trial > 0 → "trial N/3". both 0 → locked. */}
-                <div className="flex justify-center mb-2 max-w-3xl mx-auto">
+                <div className="flex justify-center mt-2 max-w-3xl mx-auto">
                   <div
                     className="inline-flex items-center gap-1 p-1 bg-bg-tertiary border border-border-default rounded-full"
                     data-testid="model-toggle"
@@ -512,37 +545,6 @@ export default function ChatPage() {
                     })}
                   </div>
                 </div>
-                {toolsPending ? (
-                  <CommandToolsNotice className="max-w-3xl mx-auto" />
-                ) : (
-                  <div className="flex items-end gap-2 max-w-3xl mx-auto">
-                    <textarea
-                      data-testid="agent-chat-input"
-                      ref={textareaRef}
-                      rows={1}
-                      value={draft}
-                      onChange={handleChange}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Message your agent (↵ to send, Shift+↵ for line break)"
-                      className="flex-1 min-h-[44px] max-h-[160px] px-3 py-2.5 bg-bg-tertiary border border-border-default rounded-lg text-sm text-text-primary font-mono outline-none resize-none focus:border-accent-green/50 transition-colors"
-                    />
-                    <button
-                      data-testid="agent-chat-send"
-                      onClick={handleSend}
-                      disabled={!hasDraft || !daemonConnected}
-                      title={!daemonConnected ? 'Start your agent to send messages' : 'Send message'}
-                      className={cn(
-                        'flex items-center justify-center w-11 h-11 rounded-lg transition-all shrink-0',
-                        hasDraft && daemonConnected
-                          ? 'bg-accent-green text-bg-primary hover:brightness-110 active:brightness-90'
-                          : 'bg-bg-tertiary text-text-tertiary cursor-not-allowed',
-                      )}
-                    >
-                      <Icon name="send" size="sm" />
-                    </button>
-                    <span className="text-[11px] text-text-tertiary hidden sm:block">↵</span>
-                  </div>
-                )}
               </div>
             </>
           )}

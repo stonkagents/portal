@@ -105,7 +105,7 @@ export function TokenDetailClient() {
   // $AGENT has no tracker record: its stonk.fun pool is the record. The tracker being down changes nothing for it.
   const externalAgent = agentMint && !viaStonkfun && (detail.isFetched || detail.isError) && !detail.token;
   const externalPool = useExternalPoolState({
-    mint: AGENT_MINT,
+    mint: AGENT_MINT ?? undefined,
     quoteMint: AGENT_QUOTE_MINT,
     poolId: AGENT_POOL_ID,
     enabled: externalAgent,

@@ -130,7 +130,7 @@ describe('Chat composer while the command tools install', () => {
     const { rerender } = renderPage();
     const notice = await screen.findByTestId('command-tools-notice');
     expect(notice).toHaveAttribute('data-state', 'running');
-    expect(notice).toHaveTextContent('can take up to 10 minutes after installation');
+    expect(notice).toHaveTextContent('Chat will activate in up to 10 minutes after background tools finish installing');
     expect(notice).toHaveTextContent('Downloading the command tools, 213 package files ready');
     expect(screen.queryByTestId('agent-chat-input')).not.toBeInTheDocument();
     expect(screen.queryByTestId('agent-chat-send')).not.toBeInTheDocument();

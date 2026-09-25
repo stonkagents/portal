@@ -93,7 +93,7 @@ const en: Record<string, string> = {
 
   /* ---- Command tools (OpenClaw CLI and gateway), set up in the background after the install ---- */
   'commandTools.pending':
-    'Your agent is live. The command tools (OpenClaw) are still being set up, which can take up to 10 minutes after installation.',
+    'Your agent is live. Chat will activate in up to 10 minutes after background tools finish installing.',
   'commandTools.failed': 'The command tools did not finish setting up',
   'commandTools.retry': 'Retry',
   'commandTools.retrying': 'Retrying',
@@ -145,6 +145,7 @@ const en: Record<string, string> = {
   'footer.privacyPolicy': 'Privacy Policy',
   'footer.termsOfService': 'Terms of Service',
   'footer.contact': 'Contact',
+  'footer.docs': 'Documentation',
   'footer.brand': 'Permissionless knowledge sharing for StonkAgents.',
   'footer.experimental': 'Experimental software. Bugs get fixed as you report them.',
 

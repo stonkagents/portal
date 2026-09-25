@@ -25,8 +25,11 @@ const RING_PLAN_MS = 700;
 /** The smallest slice drawn once anything is burned: a lit dot on the ring, never nothing. */
 export const RING_MIN_FRACTION = 0.004;
 
-const VIEW = 120;
-const R = 52;
+/** The ring's viewBox and radius; the coming-soon preview draws its ghost ring on the same geometry. */
+export const RING_VIEW = 120;
+export const RING_RADIUS = 52;
+const VIEW = RING_VIEW;
+const R = RING_RADIUS;
 const CIRCUMFERENCE = 2 * Math.PI * R;
 
 /** Fraction of the ring the slice covers for `burned` of `total`. Exported for tests. */

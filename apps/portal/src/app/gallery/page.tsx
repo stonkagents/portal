@@ -3,16 +3,18 @@
  */
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils/cn';
 import { Icon, Button, FilterChip, Modal, Input, EmptyState } from '@/components/ui';
 import { CuratedPacks, SwarmActivityFeed, ShareAssetModal } from '@/components/features/gallery';
+import { AssetPackInstall } from '@/components/features/gallery/AssetPackInstall';
 import { NetworkMap } from '@/components/features/network-map';
 import { useGallery } from '@/lib/api/hooks/use-gallery';
 import { usePeers } from '@/lib/api/hooks/use-peers';
 import { useActivity } from '@/lib/api/hooks/use-activity';
 import { useGallerySearch } from '@/lib/api/hooks/use-gallery-search';
-import { usePacks } from '@/lib/api/hooks/use-packs';
+import { usePacks, useInstalledPacks } from '@/lib/api/hooks/use-packs';
+import { installedById, PACK_NOT_READY, PACK_UNSUPPORTED, type PackInstallMode } from '@/lib/utils/pack-install';
 import { useToast } from '@/providers/ToastProvider';
 import { useDaemon } from '@/providers/DaemonProvider';
 import { AgentRequiredNotice, useAgentRequired } from '@/components/features/onboarding/AgentRequiredNotice';
@@ -59,7 +61,7 @@ export default function GalleryPage() {
   const totalShared = galleryData?.stats?.totalShared ?? '0';
   const activityItems = activityData ?? [];
   /* The pack catalog comes from the tracker only: a skeleton while it loads, a note when it fails. */
-  const packs = packsData ?? [];
+  const packs = useMemo(() => packsData ?? [], [packsData]);
 
   const [typeFilter, setTypeFilter] = useState('All');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -67,6 +69,21 @@ export default function GalleryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFilter, setSearchFilter] = useState('All');
   const [downloadingCid, setDownloadingCid] = useState<string | null>(null);
+
+  /* A search result the catalog pins is a pack item, and can be installed on its own. */
+  const packItemByCid = useMemo(() => new Map(packs.flatMap(p => p.items).filter(i => i.cid !== '').map(i => [i.cid, i])), [packs]);
+  const { data: installedAnswer, error: installedError } = useInstalledPacks();
+  const installedItems = installedById(installedAnswer?.items);
+  const packsUnsupported = installedError instanceof ApiRequestError && installedError.status === 404;
+  const packsNotReady = installedAnswer?.status === 'not_ready';
+  const canInstallPackItems = connected && !packsUnsupported && !packsNotReady && installedError == null;
+  /* No agent means no install control on a result at all; the modal's own notice says why. */
+  const packInstallMode: PackInstallMode = !connected ? 'unavailable' : canInstallPackItems ? 'ready' : 'blocked';
+  const packInstallBlockedReason = packsUnsupported
+    ? PACK_UNSUPPORTED
+    : packsNotReady
+      ? (installedAnswer?.message ?? PACK_NOT_READY)
+      : (installedError?.message ?? undefined);
 
   const { data: searchData } = useGallerySearch(searchQuery, searchFilter);
   const serverResults: SearchResult[] = (searchData?.results ?? []).map(r => ({
@@ -232,7 +249,8 @@ export default function GalleryPage() {
                   <div className="flex gap-3 text-xs text-text-secondary">
                     <span>{r.size}</span>
                     <span>{r.agents} agents</span>
-                    <span className="text-accent-green">&starf; {r.rep}</span>
+                    {/* JSX knows no &starf;, so the name itself was on the screen. */}
+                    <span className="text-accent-green">&#9733; {r.rep}</span>
                   </div>
                   <Button
                     variant="primary"
@@ -246,6 +264,14 @@ export default function GalleryPage() {
                     {downloadingCid === r.cid ? 'Downloading...' : 'Download'}
                   </Button>
                 </div>
+                {packItemByCid.has(r.cid) && (
+                  <AssetPackInstall
+                    item={packItemByCid.get(r.cid)!}
+                    mode={packInstallMode}
+                    blockedReason={packInstallBlockedReason}
+                    installed={installedItems.has(packItemByCid.get(r.cid)!.id)}
+                  />
+                )}
               </div>
             ))}
             {filtered.length === 0 && <EmptyState size="sm" title="No results found." className="py-8" />}

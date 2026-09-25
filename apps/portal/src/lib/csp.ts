@@ -10,6 +10,15 @@ import { STONKFUN_SITE } from '@/lib/api/stonkfun';
 import { appConfig } from '@/lib/config/app.config';
 
 /**
+ * Cloudflare Turnstile. The human check on the feedback and interest forms loads its
+ * script from here and renders in a frame served from here, so the origin has to be in
+ * script-src, frame-src and connect-src. Without it the script is blocked, the widget
+ * never produces a token, and a tracker with TURNSTILE_SECRET_KEY set answers every
+ * send with 403 TURNSTILE_FAILED (which is what production did before this was added).
+ */
+export const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
+
+/**
  * Hosts the browser may open connections to. Infrastructure hosts come from
  * config (env), never a hardcoded domain; the rest are fixed third parties.
  */
@@ -56,18 +65,21 @@ export function connectSources(): string {
     'wss://*.solana.com',
     'https://api.pinata.cloud',
     'https://gateway.pinata.cloud',
+    // Cloudflare Turnstile: the widget posts the challenge from its frame. Harmless where
+    // NEXT_PUBLIC_TURNSTILE_SITE_KEY is empty, since nothing loads the script there.
+    TURNSTILE_ORIGIN,
   ].join(' ');
 }
 
 /** The page's Content-Security-Policy (the meta tag in the root layout). */
 export const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-eval' 'unsafe-inline' ${TURNSTILE_ORIGIN}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self'",
   `connect-src ${connectSources()}`,
-  `frame-src ${config.links.birdeye} ${config.links.dexscreener}`,
+  `frame-src ${config.links.birdeye} ${config.links.dexscreener} ${TURNSTILE_ORIGIN}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -83,6 +83,8 @@ export function SplashScreen() {
   const [pulseActive, setPulseActive] = useState(false);
   const [removed, setRemoved] = useState(false);
   const [countdownDone, setCountdownDone] = useState(false);
+  /** Entering is consent. Ticked by default so Enter works at once; unticking it disables Enter. */
+  const [agreed, setAgreed] = useState(true);
   /** 'checking' = SSR/initial render (plain dark cover), 'show' = first visit, 'hide' = already seen */
   const [visibility, setVisibility] = useState<'checking' | 'show' | 'hide'>('checking');
   const { isPageReady } = usePageReadiness();
@@ -153,12 +155,12 @@ export function SplashScreen() {
   }, [countdownDone, isPageReady, dismiss]);
 
   const handleStart = useCallback(() => {
-    if (phase !== 'idle') return;
+    if (phase !== 'idle' || !agreed) return;
     setPhase('countdown');
 
     startTimeRef.current = performance.now();
     rafRef.current = requestAnimationFrame(tick);
-  }, [phase, tick]);
+  }, [phase, agreed, tick]);
 
   useEffect(() => {
     return () => {
@@ -211,13 +213,60 @@ export function SplashScreen() {
         )}
 
         {phase === 'idle' && (
-          <button
-            onClick={handleStart}
-            className="relative isolate inline-flex items-center gap-2 px-8 py-4 font-mono text-[clamp(1rem,2.5vw,1.25rem)] font-bold text-black bg-accent-green border-none rounded-md cursor-pointer min-h-[52px] uppercase tracking-wider before:content-[''] before:absolute before:inset-0 before:-z-10 before:rounded-md before:shadow-[0_0_25px_rgba(0,255,0,0.5),0_0_50px_rgba(0,255,0,0.15)] before:animate-splash-btn-pulse hover:scale-105 hover:before:animate-none hover:before:opacity-100 active:scale-[0.98] transition-transform duration-150"
-            data-testid="splash-fix-btn"
-          >
-            Enter
-          </button>
+          <>
+            {/* Consent sits above the only button, ticked by default so nobody is stopped, and
+                unticking it disables Enter. The legal pages open in a new tab, because this is a
+                full-screen overlay that must not be navigated away from. */}
+            <label
+              className="mb-5 flex max-w-md cursor-pointer items-start gap-3 px-6 text-left text-[0.8rem] leading-relaxed text-text-secondary"
+              data-testid="splash-consent"
+            >
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={e => setAgreed(e.target.checked)}
+                className="mt-[3px] h-4 w-4 shrink-0 cursor-pointer accent-accent-green"
+                data-testid="splash-consent-checkbox"
+              />
+              <span>
+                By clicking Enter, you agree to the{' '}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-primary underline decoration-text-tertiary underline-offset-2 hover:text-accent-green"
+                  data-testid="splash-consent-terms"
+                >
+                  Terms and Conditions
+                </a>
+                ,{' '}
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-primary underline decoration-text-tertiary underline-offset-2 hover:text-accent-green"
+                  data-testid="splash-consent-privacy"
+                >
+                  Privacy Policy
+                </a>
+                , and certify that you are over 18 years old.
+              </span>
+            </label>
+
+            <button
+              onClick={handleStart}
+              disabled={!agreed}
+              aria-disabled={!agreed}
+              className={`relative isolate inline-flex items-center gap-2 px-8 py-4 font-mono text-[clamp(1rem,2.5vw,1.25rem)] font-bold text-black bg-accent-green border-none rounded-md min-h-[52px] uppercase tracking-wider transition-[transform,opacity] duration-150 ${
+                agreed
+                  ? "cursor-pointer before:content-[''] before:absolute before:inset-0 before:-z-10 before:rounded-md before:shadow-[0_0_25px_rgba(0,255,0,0.5),0_0_50px_rgba(0,255,0,0.15)] before:animate-splash-btn-pulse hover:scale-105 hover:before:animate-none hover:before:opacity-100 active:scale-[0.98]"
+                  : 'cursor-not-allowed opacity-40'
+              }`}
+              data-testid="splash-fix-btn"
+            >
+              Enter
+            </button>
+          </>
         )}
 
         {(phase === 'countdown' || phase === 'dismissing') && (

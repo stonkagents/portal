@@ -88,7 +88,7 @@ const zh: Record<string, string> = {
     '如果浏览器询问是否允许此网站访问本地网络，请选择“允许”，然后重新加载页面。之后可点击地址栏左侧的图标，将“本地网络访问”（Chrome 和 Edge 称为“设备上的应用”）设为“允许”。',
 
   /* ---- Command tools (OpenClaw CLI and gateway), set up in the background after the install ---- */
-  'commandTools.pending': '你的智能体已上线。命令行工具（OpenClaw）仍在后台安装中，安装完成后最多可能需要 10 分钟。',
+  'commandTools.pending': '你的智能体已上线。后台工具安装完成后，聊天将在最多 10 分钟内启用。',
   'commandTools.failed': '命令行工具未能完成安装',
   'commandTools.retry': '重试',
   'commandTools.retrying': '正在重试',
@@ -138,6 +138,7 @@ const zh: Record<string, string> = {
   'footer.privacyPolicy': '隐私政策',
   'footer.termsOfService': '服务条款',
   'footer.contact': '联系我们',
+  'footer.docs': '文档',
   'footer.brand': '为 StonkAgents 打造的无许可知识共享。',
   'footer.experimental': '实验性软件。欢迎反馈，我们会尽快修复。',
 

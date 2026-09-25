@@ -73,10 +73,22 @@ export function transformGalleryResponse(raw: PortalGalleryResponse): GalleryRes
 
 /** One entry of a curated pack (GET /api/packs items[]). */
 export interface TransformedPackItem {
+  /** The install id the daemon takes and returns. Empty on a catalog that predates the install path. */
+  id: string;
   filename: string;
   type: string;
   title: string;
   description: string;
+  version: string;
+  /** The pinned content address. Empty means the catalog carries no bundle for it yet. */
+  cid: string;
+  /** The bundle's size in bytes; 0 when the catalog does not say. */
+  size: number;
+  /** The catalog's own sentence naming what installing it writes. */
+  touches: string;
+  /** The pack this item is listed under, so a lone item can still say where it comes from. */
+  packId: string;
+  packTitle: string;
 }
 
 /**
@@ -105,10 +117,18 @@ export function transformPacks(raw: PortalPack[]): TransformedPack[] {
     description: pack.description,
     assets: pack.item_count,
     items: pack.items.map(item => ({
+      /* An item with no id cannot be installed; the card says so rather than sending a request that cannot work. */
+      id: item.id ?? '',
       filename: item.filename,
       type: item.type,
       title: item.title,
       description: item.description,
+      version: item.version ?? '',
+      cid: item.cid ?? '',
+      size: item.size ?? 0,
+      touches: item.touches ?? '',
+      packId: pack.id,
+      packTitle: pack.name,
     })),
   }));
 }

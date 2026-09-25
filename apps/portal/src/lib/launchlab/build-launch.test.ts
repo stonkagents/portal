@@ -213,9 +213,10 @@ describe('prepareLaunch against the SDK', () => {
     expect(prepared.blockhash).toBe(BLOCKHASH);
     expect(prepared.lastValidBlockHeight).toBe(1234);
     expect(prepared.summary.mock).toBe(false);
-    // Mint signed; the wallet signs last.
+    // Nothing has signed yet: the wallet signs first, then completeLaunchSignatures adds the mint.
     const mintIndex = tx.message.staticAccountKeys.findIndex(k => k.toBase58() === prepared.mint);
-    expect(tx.signatures[mintIndex].some(b => b !== 0)).toBe(true);
+    expect(tx.signatures[mintIndex].every(b => b === 0)).toBe(true);
+    expect(prepared.signers.map(s => s.publicKey.toBase58())).toContain(prepared.mint);
   });
 
   it('uses the picked quote for the config id, decimals and token program', async () => {
@@ -387,10 +388,11 @@ describe('prepareLaunch recompiles the SDK message faithfully', () => {
     expect(message.staticAccountKeys[0].equals(CREATOR.publicKey)).toBe(true);
     expect(message.staticAccountKeys[1].toBase58()).toBe(prepared.mint);
 
-    // The mint has signed; the payer slot is still empty for Phantom to fill.
+    // Both slots are empty: Phantom fills the payer's first, then the mint signs the same message.
     expect(tx.signatures).toHaveLength(2);
     expect(tx.signatures[0].every(b => b === 0)).toBe(true);
-    expect(tx.signatures[1].some(b => b !== 0)).toBe(true);
+    expect(tx.signatures[1].every(b => b === 0)).toBe(true);
+    expect(prepared.signers.map(s => s.publicKey.toBase58())).toEqual([prepared.mint]);
 
     // The SDK's instructions come first, our fee transfer last, and every original key survived.
     const decompiled = TransactionMessage.decompile(message, { addressLookupTableAccounts: [alt] });
@@ -405,6 +407,38 @@ describe('prepareLaunch recompiles the SDK message faithfully', () => {
           .some(k => k.equals(expected)),
       ).toBe(true);
     }
+  });
+});
+
+describe('completeLaunchSignatures', () => {
+  it('adds the mint signature to the transaction the wallet signed, without touching its message', async () => {
+    const { completeLaunchSignatures } = await loadWithRealWallet(true);
+    const mint = Keypair.generate();
+    const tx = sdkTransaction(CREATOR.publicKey, [mint.publicKey]);
+    expect(tx.message.header.numRequiredSignatures).toBe(2);
+
+    // What Phantom does: sign the payer slot on an otherwise unsigned transaction.
+    tx.sign([CREATOR]);
+    const messageBefore = Buffer.from(tx.message.serialize());
+    const payerSigBefore = Buffer.from(tx.signatures[0]);
+    expect(tx.signatures[1].every(b => b === 0)).toBe(true);
+
+    const out = completeLaunchSignatures(tx, [mint]);
+    expect(out).toBe(tx);
+    expect(Buffer.from(tx.message.serialize()).equals(messageBefore)).toBe(true);
+    expect(Buffer.from(tx.signatures[0]).equals(payerSigBefore)).toBe(true);
+    expect(tx.signatures[1].some(b => b !== 0)).toBe(true);
+    // Every slot filled: the network would accept it.
+    expect(tx.signatures.every(s => s.some(b => b !== 0))).toBe(true);
+  });
+
+  it('is a no-op with nothing to add', async () => {
+    const { completeLaunchSignatures } = await loadWithRealWallet(true);
+    const tx = sdkTransaction(CREATOR.publicKey);
+    tx.sign([CREATOR]);
+    const before = Buffer.from(tx.serialize());
+    expect(completeLaunchSignatures(tx, [])).toBe(tx);
+    expect(Buffer.from(tx.serialize()).equals(before)).toBe(true);
   });
 });
 

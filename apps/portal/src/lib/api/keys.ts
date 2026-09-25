@@ -93,6 +93,8 @@ export const queryKeys = {
     autopilotEvents: ['daemon', 'autopilot', 'events'] as const,
     /** The background command tools job (Windows installer 2.6.0+), read from the controller. */
     commandTools: ['daemon', 'command-tools'] as const,
+    /** The pack items this agent has installed, read from its own index. */
+    packsInstalled: ['daemon', 'packs', 'installed'] as const,
   },
   gallery: {
     search: (q: string, type?: string) => ['gallery', 'search', q, type ?? ''] as const,

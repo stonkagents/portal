@@ -34,7 +34,8 @@ export interface AccessBlock {
   message: string;
   trust: {
     company: string;
-    windows_authenticode_signed: true;
+    /** False until code signing is live: the Windows installer ships unsigned today. */
+    windows_authenticode_signed: boolean;
     localhost_only: true;
     telemetry: string;
     privacy: string;

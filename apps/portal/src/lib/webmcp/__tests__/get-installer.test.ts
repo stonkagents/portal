@@ -38,10 +38,10 @@ beforeEach(() => {
 });
 
 describe('getInstallerTool', () => {
-  it('has the tool name, asks for the launching wallet, and makes no notarization claim', () => {
+  it('has the tool name, asks for the launching wallet, and claims no signing or notarization', () => {
     expect(getInstallerTool.name).toBe('getInstaller');
     expect(getInstallerTool.description).not.toMatch(/notariz/i);
-    expect(getInstallerTool.description).toContain('Authenticode-signed');
+    expect(getInstallerTool.description).toMatch(/not code-signed yet/);
     expect(getInstallerTool.description).toMatch(/launched a token/);
   });
 
@@ -140,15 +140,25 @@ describe('after a launch (unlocked)', () => {
     expect(['macOS', 'windows', 'linux']).toContain(installer.platform);
   });
 
-  it('includes trust signals with company info and Windows code signing only', async () => {
+  it('includes trust signals with company info and an unsigned Windows installer', async () => {
     const result = (await getInstallerTool.execute(LAUNCHED)) as Result;
     const trust = result.trust as Result;
     const company = trust.company as Result;
     expect(company.legal_name).toBe('Tevaera Labs LLC');
     expect(company.dba).toBe('StonkAgents');
     const signing = trust.code_signing as Result;
-    expect((signing.windows as Result).authenticode_signed).toBe(true);
+    const windows = signing.windows as Result;
+    expect(windows.authenticode_signed).toBe(false);
+    expect(windows.publisher).toBeNull();
+    expect(windows.smartscreen).toMatch(/unknown publisher/i);
     expect(signing).not.toHaveProperty('macOS');
+  });
+
+  it('walks the user through the unsigned-installer warning instead of promising a signature', async () => {
+    const result = (await getInstallerTool.execute(LAUNCHED)) as Result;
+    const steps = result.install_steps as string[];
+    expect(steps.join(' ')).toMatch(/Run anyway/);
+    expect(steps.join(' ')).not.toMatch(/confirm it is signed/);
   });
 
   it('includes safety analysis, SLOs and Windows uninstall steps', async () => {

@@ -251,12 +251,28 @@ export interface PortalGalleryResponse {
   total_size_bytes: number;
 }
 
-/** GET /api/packs — single pack item */
+/**
+ * GET /api/packs — single pack item. The id, version, cid and touches arrived
+ * with the install path (agent repository, docs/packs.md section 5); a tracker that
+ * predates it sends the first four fields only, so the rest are optional.
+ */
 interface PortalPackItem {
   filename: string;
   type: string;
   title: string;
   description: string;
+  /** The install id. Everything the daemon takes and returns is keyed by it. */
+  id?: string;
+  version?: string;
+  /** The content address the catalog pins for this item. Absent means not seeded yet. */
+  cid?: string;
+  sha256?: string;
+  /** The bundle's size in bytes. */
+  size?: number;
+  /** Where it lands, relative to the agent's state directory. */
+  target?: string;
+  /** The sentence naming what installing it writes. */
+  touches?: string;
 }
 
 /** GET /api/packs — single pack */

@@ -222,7 +222,8 @@ export function TokenTrading({
     );
   }
 
-  if (inAppSwap) {
+  // The in-app swap is only asked for on the Network token's own page, which exists once the mint is configured.
+  if (inAppSwap && AGENT_MINT) {
     return (
       <JupiterSwapPanel
         token={token}

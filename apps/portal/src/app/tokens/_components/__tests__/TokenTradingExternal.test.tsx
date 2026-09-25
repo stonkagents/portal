@@ -59,7 +59,7 @@ describe('externalAgentToken', () => {
       priceUsd: null,
       curveProgressPct: stonkfunPool.progressPct,
     });
-    expect(externalAgentToken(null)).toMatchObject({ source: 'external', poolId: null, creator: '', quoteSymbol: 'SOL' });
+    expect(externalAgentToken(null)).toMatchObject({ source: 'external', poolId: null, creator: '', quoteSymbol: 'STONK' });
   });
 });
 

@@ -21,7 +21,8 @@ vi.mock('@/lib/api/hooks/use-update-status', () => ({ useUpdateStatus: () => upd
 const openFeedback = vi.hoisted(() => vi.fn());
 vi.mock('@/components/features/feedback', () => ({ useFeedback: () => ({ open: openFeedback }) }));
 
-const links = vi.hoisted(() => ({ x: '', contactEmail: '', github: '' }));
+const links = vi.hoisted(() => ({ x: '', contactEmail: '', github: '', docs: 'https://docs.stonkagents.com' }));
+const features = vi.hoisted(() => ({ docsEnabled: false }));
 vi.mock('@/config', async () => {
   const actual = await vi.importActual<{ config: Record<string, unknown> }>('@/config');
   const base = actual.config;
@@ -39,6 +40,15 @@ vi.mock('@/config', async () => {
         },
         get github() {
           return links.github;
+        },
+        get docs() {
+          return links.docs;
+        },
+      },
+      features: {
+        ...(base.features as Record<string, unknown>),
+        get docsEnabled() {
+          return features.docsEnabled;
         },
       },
     },
@@ -132,6 +142,21 @@ describe('Footer', () => {
     expect(screen.getByTestId('footer-legal-privacy-policy')).toHaveAttribute('href', '/privacy');
     expect(screen.getByTestId('footer-legal-terms-of-service')).toHaveAttribute('href', '/terms');
     expect(screen.getByTestId('footer-legal-contact')).toHaveAttribute('href', '/contact');
+  });
+
+  it('links the documentation site only when the build enables docs', () => {
+    features.docsEnabled = false;
+    const { unmount } = render(<Footer />);
+    expect(screen.queryByTestId('footer-docs')).toBeNull();
+    unmount();
+
+    features.docsEnabled = true;
+    render(<Footer />);
+    const docs = screen.getByTestId('footer-docs');
+    expect(docs).toHaveAttribute('href', 'https://docs.stonkagents.com');
+    expect(docs).toHaveAttribute('target', '_blank');
+    expect(docs).toHaveAttribute('rel', 'noopener noreferrer');
+    features.docsEnabled = false;
   });
 
   it('shows the experimental banner on dev and hides it on production', () => {

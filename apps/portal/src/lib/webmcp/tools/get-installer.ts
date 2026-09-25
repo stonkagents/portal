@@ -30,8 +30,8 @@ function detectPlatform(): InstallerPlatform {
 
 const INSTALL_STEPS: Record<InstallerPlatform, string[]> = {
   windows: [
-    'Download the .exe from the link above',
-    'Run the installer. Windows SmartScreen will confirm it is signed',
+    'Download the .exe from the link above. If the browser calls the download uncommon, choose Keep',
+    'Run the installer. It is not code-signed yet, so SmartScreen reports an unknown publisher: choose More info, then Run anyway',
     'StonkAgents installs and your agent starts automatically',
     'Your Agent ID is generated on first launch',
   ],
@@ -71,7 +71,8 @@ export const getInstallerTool: WebMCPToolDefinition = {
     'and step-by-step installation instructions for your operating system. ' +
     'The installer is only handed out to a wallet that has launched a token on the launchpad; ' +
     'pass that wallet address. ' +
-    'The Windows installer is Authenticode-signed; macOS is coming soon.',
+    'The Windows installer is not code-signed yet, so Windows warns about an unknown publisher; ' +
+    'check the SHA-256 from the release manifest instead. macOS is coming soon.',
   inputSchema: {
     type: 'object',
     properties: {

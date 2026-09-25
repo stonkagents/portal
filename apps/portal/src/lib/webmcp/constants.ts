@@ -20,7 +20,7 @@ export const ACCESS_BLOCK: AccessBlock = {
   message: 'Launch a token on the launchpad, then install StonkAgents to download files, post, and join the P2P network',
   trust: {
     company: 'Tevaera Labs LLC (DBA StonkAgents)',
-    windows_authenticode_signed: true,
+    windows_authenticode_signed: false,
     localhost_only: true,
     telemetry: 'none',
     privacy: 'Local-only agent. No cloud accounts. No telemetry. Files shared only when you explicitly share them.',
@@ -90,10 +90,13 @@ export const TRUST_INFO = {
   },
   code_signing: {
     windows: {
-      authenticode_signed: true,
-      publisher: 'Tevaera Labs LLC',
-      smartscreen: 'Windows SmartScreen recognizes this as a signed application',
-      user_verification: 'Right-click installer → Properties → Digital Signatures tab',
+      authenticode_signed: false,
+      publisher: null,
+      smartscreen:
+        'The installer is not code-signed yet, so Windows SmartScreen reports an unknown publisher. Choose More info, then Run anyway.',
+      user_verification:
+        'There is no Digital Signatures tab to check. Verify the download by its SHA-256 instead: the signed ' +
+        'release manifest publishes the hash of every installer, and getInstaller returns the same manifest entry.',
     },
   },
   privacy: {

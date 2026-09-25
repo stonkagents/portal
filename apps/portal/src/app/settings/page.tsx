@@ -18,11 +18,13 @@ const AutonomyTab = dynamic(() => import('./_components/AutonomyTab').then(m => 
 const FoldersTab = dynamic(() => import('./_components/FoldersTab').then(m => m.FoldersTab), { loading: () => <TabSkeleton /> });
 const SecurityTab = dynamic(() => import('./_components/SecurityTab').then(m => m.SecurityTab), { loading: () => <TabSkeleton /> });
 const AccountTab = dynamic(() => import('./_components/AccountTab').then(m => m.AccountTab), { loading: () => <TabSkeleton /> });
+const PacksTab = dynamic(() => import('./_components/PacksTab').then(m => m.PacksTab), { loading: () => <TabSkeleton /> });
 
 const TABS = [
   { id: 'identity', label: 'Identity', icon: 'user' as const },
   { id: 'credits', label: 'Credits & API', icon: 'coins' as const },
   { id: 'autonomy', label: 'Autonomy', icon: 'shield' as const },
+  { id: 'packs', label: 'Packs', icon: 'package' as const },
   { id: 'folders', label: 'Folders & Sync', icon: 'hard-drive' as const },
   { id: 'security', label: 'Security', icon: 'lock' as const },
   { id: 'account', label: 'Account', icon: 'settings' as const },
@@ -32,6 +34,7 @@ const TAB_PANELS: Record<string, React.ComponentType> = {
   identity: IdentityTab,
   credits: CreditsTab,
   autonomy: AutonomyTab,
+  packs: PacksTab,
   folders: FoldersTab,
   security: SecurityTab,
   account: AccountTab,
